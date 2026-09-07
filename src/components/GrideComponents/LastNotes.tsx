@@ -1,6 +1,6 @@
 "use client";
-import { useCourses } from "@/lib/context/CoursesContex";
-import { useNotes } from "@/lib/context/NotesContext";
+import { useCourses } from "@/lib/context/CoursesContext";
+import { useNotes } from "@/lib/context/NotesContext.tsx";
 import { Circle, NotebookPen } from "lucide-react";
 
 export default function notes() {

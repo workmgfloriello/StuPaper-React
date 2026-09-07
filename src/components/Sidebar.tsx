@@ -14,7 +14,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { useCourses } from "../lib/context/CoursesContex";
+import { useCourses } from "../lib/context/CoursesContext";
 
 const navItems = [
   {

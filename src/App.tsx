@@ -1,6 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 
-import { CoursesProvider } from "./lib/context/CoursesContex";
+import { CoursesProvider } from "./lib/context/CoursesContext";
 import { NotesProvider } from "./lib/context/NotesContext";
 
 import Home from "./pages/Home";
@@ -12,15 +12,16 @@ export default function App() {
   return (
     <CoursesProvider>
       <NotesProvider>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/corsi" element={<CorsiPage />} />
             <Route path="/appunti" element={<AppuntiPage />} />
             <Route path="/editor" element={<EditorPage />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </NotesProvider>
     </CoursesProvider>
   );
 }
+

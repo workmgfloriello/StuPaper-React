@@ -1,5 +1,5 @@
 "use client";
-import { useCourses } from "@/lib/context/CoursesContex";
+import { useCourses } from "@/lib/context/CoursesContext";
 import { BookOpen, GraduationCap, UserRound } from "lucide-react";
 
 export default function RecentCourses() {

@@ -1,6 +1,6 @@
 "use client";
-import { useCourses } from "@/lib/context/CoursesContex";
-import { useNotes } from "@/lib/context/NotesContext";
+import { useCourses } from "@/lib/context/CoursesContext";
+import { useNotes } from "@/lib/context/NotesContext.tsx";
 import { useState } from "react";
 
 export default function HomepageNotes() {

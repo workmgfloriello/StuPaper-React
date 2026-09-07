@@ -1,6 +1,6 @@
 "use client";
-import { Course } from "@/interface/interface";
-import { useCourses } from "@/lib/context/CoursesContex";
+import { Course } from "@/interface/interface.tsx";
+import { useCourses } from "@/lib/context/CoursesContext";
 import { useState } from "react";
 
 export default function HomepageCourses() {

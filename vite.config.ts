@@ -1,22 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
 export default defineConfig({
- plugins: [
-  react(),
-  tailwindcss(),
-  VitePWA({
-    registerType: "autoUpdate",
-    manifest: false,
-    workbox: {
-      globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-      maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-    },
-  }),
-],
+  plugins: [react(), tailwindcss()],
 
   resolve: {
     alias: {
@@ -27,6 +15,8 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+
+  base: "./",
 
   build: {
     outDir: "out",
