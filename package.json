@@ -1,0 +1,83 @@
+{
+  "name": "stupaper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "electron": "electron --require tsx/cjs .",
+    "electron:dev": "concurrently --kill-others \"npm run dev\" \"wait-on http://localhost:3000 && npm run electron\"",
+    "dist": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "@tiptap/extension-code-block-lowlight": "^3.31.2",
+    "@tiptap/extension-color": "^3.31.2",
+    "@tiptap/extension-font-family": "^3.31.2",
+    "@tiptap/extension-highlight": "^3.31.2",
+    "@tiptap/extension-horizontal-rule": "^3.31.2",
+    "@tiptap/extension-link": "^3.31.2",
+    "@tiptap/extension-mathematics": "^3.31.2",
+    "@tiptap/extension-placeholder": "^3.31.2",
+    "@tiptap/extension-task-item": "^3.31.2",
+    "@tiptap/extension-task-list": "^3.31.2",
+    "@tiptap/extension-text-align": "^3.31.2",
+    "@tiptap/extension-text-style": "^3.31.2",
+    "@tiptap/extension-underline": "^3.31.2",
+    "@tiptap/pm": "^3.31.2",
+    "@tiptap/react": "^3.31.2",
+    "@tiptap/starter-kit": "^3.31.2",
+    "highlight.js": "^11.10.0",
+    "katex": "^0.18.5",
+    "lowlight": "^3.3.0",
+    "lucide-react": "^1.40.0",
+    "mathlive": "^0.110.0",
+    "react": "19.2.8",
+    "react-day-picker": "^10.0.1",
+    "react-dom": "19.2.8",
+    "react-router-dom": "^7.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tailwindcss/vite": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^10.0.5",
+    "electron": "^44.2.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^9",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.13",
+    "typescript": "^5",
+    "typescript-eslint": "^8.18.0",
+    "vite": "^6.0.5",
+    "vite-plugin-pwa": "^0.21.1",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "com.stupaper.app",
+    "productName": "StuPaper",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "electron/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
