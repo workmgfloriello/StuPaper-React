@@ -8,14 +8,18 @@ export default function HomepageCourses() {
 
   const [showForm, setShowForm] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Course>({
+    id: "",
     name: "",
     code: "",
     professor: "",
-    cfu: "",
+    cfu: 0,
     semester: 0,
+    notesCount: 0,
     description: "",
     year: 0,
+    recent:false,
+    color: "",
   });
 
   const handleChange = (
@@ -29,7 +33,7 @@ export default function HomepageCourses() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newCourse: Course = {
@@ -47,15 +51,26 @@ export default function HomepageCourses() {
     };
 
     setCourses((prev) => [...prev, newCourse]);
-    console.log(courses);
+
+    try {
+      const dbInsert = await (window.electronAPI as any)?.insertCourse(newCourse);
+      console.log(dbInsert);
+    } catch (error) {
+      console.error("Error inserting course:", error);
+    }
+
     setFormData({
+      id: String(Math.floor(Math.random() * (100 - 1 + 1)) + 1),
       name: "",
       code: "",
       professor: "",
-      cfu: "",
+      cfu: 0,
       semester: 1,
-      year: 1,
+      notesCount: 0,
       description: "",
+      year: 1,
+      recent: false,
+      color: "bg-indigo-100 text-indigo-700",
     });
 
     setShowForm(false);
@@ -251,6 +266,21 @@ export default function HomepageCourses() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Descrizione del corso"
+                required
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Colore
+              </label>
+              <input
+                type="color"
+                name="color"
+                value={formData.color}
+                onChange={handleChange}
+                placeholder="Colore del corso"
                 required
                 className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-indigo-500"
               />

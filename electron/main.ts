@@ -2,6 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "node:fs";
+import { getDatabase,insertCourse,selectCourses } from "../database/ManageDatabase.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,9 +70,17 @@ ipcMain.handle("export-pdf", async () => {
   };
 });
 
+//Insert al DB
+ipcMain.handle("courses:insert", (_, course) => {
+  return insertCourse(course);
+});
+//Select al DB
+ipcMain.handle("courses:select", () => {
+  return selectCourses();
+});
 app.whenReady().then(() => {
   createWindow();
-
+  getDatabase();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
