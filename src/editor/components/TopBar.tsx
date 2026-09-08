@@ -22,6 +22,12 @@ import {
   Code,
   Minus,
   ClipboardList,
+  Table2,
+  Rows3,
+  Columns3,
+  Columns4,
+  Trash2,
+  Rows4,
 } from "lucide-react";
 
 interface TopBarProps {
@@ -391,6 +397,70 @@ export default function TopBar({ editor, onMathClick }: TopBarProps) {
 
       <ToolbarButton onClick={onMathClick} title="Inserisci formula matematica">
         <SquareFunction size={16} />
+      </ToolbarButton>
+
+      {/* Tabelle */}
+
+      <ToolbarButton
+        onClick={() =>
+          editor
+            .chain()
+            .focus()
+            .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+            .run()
+        }
+        title="Inserisci Tabella"
+      >
+        <Table2 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().addRowBefore().run()}
+        title="Inserisci Riga Sopra"
+      >
+        <Rows3 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().addRowAfter().run()}
+        title="Inserisci Riga Sotto"
+      >
+        <Rows4 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().deleteRow().run()}
+        title="Elimina Riga"
+      >
+        <Rows3 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().addColumnBefore().run()}
+        title="Inserisci Colonna a Sinistra"
+      >
+        <Columns3 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().addColumnAfter().run()}
+        title="Inserisci Colonna a Destra"
+      >
+        <Columns4 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().deleteColumn().run()}
+        title="Elimina Colonna"
+      >
+        <Columns3 size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().deleteTable().run()}
+        title="Elimina Tabella"
+      >
+        <Trash2 size={16} />
       </ToolbarButton>
     </div>
   );

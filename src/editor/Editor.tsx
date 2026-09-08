@@ -13,6 +13,10 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Mathematics from "@tiptap/extension-mathematics";
+import { Table } from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
 
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
@@ -30,7 +34,6 @@ import MathPanel from "./components/MathPanel";
 import CustomBlockquote from "./extension/CustomBlockquote";
 import { useEffect, useState, type ReactNode } from "react";
 
-
 const lowlight = createLowlight({
   javascript,
   typescript,
@@ -39,7 +42,6 @@ const lowlight = createLowlight({
   java,
   cpp,
 });
-
 
 interface EditorProps {
   /** Contenuto iniziale (HTML) */
@@ -122,6 +124,12 @@ export default function Editor({
         nested: false,
       }),
       Mathematics,
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
 
       //CUSTOM EXTENDS
       CustomBlockquote,
@@ -188,7 +196,7 @@ export default function Editor({
               <TopBar editor={editor} onMathClick={handleMathClick} />
             </ToolbarFade>
           )}
-          <SaveBar editor={editor}/>
+          <SaveBar editor={editor} />
         </div>
       </div>
 

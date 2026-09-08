@@ -1,12 +1,13 @@
-import Database from "better-sqlite3";
+import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
 import fs from "node:fs";
 import { app } from "electron";
+
 import type { Course } from "../src/interface/interface.ts";
 
-let db: Database.Database | null = null;
+let db: DatabaseSync | null = null;
 
-export function getDatabase() {
+export function getDatabase(): DatabaseSync {
   if (db) {
     return db;
   }
@@ -17,7 +18,10 @@ export function getDatabase() {
 
   const dbPath = path.join(dataPath, "stupaperBase.db");
 
-  db = new Database(dbPath);
+  db = new DatabaseSync(dbPath);
+
+  // Foreign keys
+  db.exec("PRAGMA foreign_keys = ON");
 
   initializeDatabase(db);
 
@@ -26,20 +30,20 @@ export function getDatabase() {
   return db;
 }
 
-function initializeDatabase(database: Database.Database) {
+function initializeDatabase(database: DatabaseSync) {
   database.exec(`
     CREATE TABLE IF NOT EXISTS courses (
-     id TEXT PRIMARY KEY,
-     name TEXT NOT NULL,
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
       code TEXT,
-        professor TEXT,
-         cfu INTEGER,
-         semester INTEGER,
-         notes_count INTEGER DEFAULT 0,
-        description TEXT,
-        color TEXT,
-        recent INTEGER DEFAULT 0,
-     year INTEGER
+      professor TEXT,
+      cfu INTEGER,
+      semester INTEGER,
+      notes_count INTEGER DEFAULT 0,
+      description TEXT,
+      color TEXT,
+      recent INTEGER DEFAULT 0,
+      year INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS subjects (
@@ -78,23 +82,50 @@ function initializeDatabase(database: Database.Database) {
   `);
 }
 
-
-//Course
+// Course
 export function insertCourse(course: Course) {
-  const db = getDatabase();
+  const database = getDatabase();
 
-  const stmt = db.prepare(
-    ` INSERT INTO courses ( id, name, code, professor, cfu, semester, notes_count, description, color, recent, year ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) `,
+  const stmt = database.prepare(`
+    INSERT INTO courses (
+      id,
+      name,
+      code,
+      professor,
+      cfu,
+      semester,
+      notes_count,
+      description,
+      color,
+      recent,
+      year
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  stmt.run(
+    course.id,
+    course.name,
+    course.code,
+    course.professor,
+    course.cfu,
+    course.semester,
+    course.notesCount,
+    course.description,
+    course.color,
+    course.recent ? 1 : 0,
+    course.year
   );
 
-  stmt.run( course.id, course.name, course.code, course.professor, course.cfu, course.semester, course.notesCount, course.description, course.color, course.recent ? 1 : 0, course.year ); return course;
+  return course;
 }
 
-export function selectCourses(){
-  const db = getDatabase();
-  const courses = db.prepare(
-    'SELECT * FROM courses'
-  )
-  .all()
+export function selectCourses() {
+  const database = getDatabase();
+
+  const courses = database
+    .prepare("SELECT * FROM courses")
+    .all();
+
   return courses;
 }
