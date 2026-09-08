@@ -254,8 +254,8 @@ export default function Sidebar() {
                             rounded-md
                             text-[10px]
                             font-semibold
-                            ${course.color}
                           `}
+                          style={{ backgroundColor: course.color }}
                         >
                           {course.code}
                         </span>

@@ -33,7 +33,8 @@ export default function notes() {
               className="flex items-center gap-4 px-4 py-3 hover:bg-gray-50"
             >
               <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${color}`}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg`}
+                style={{ backgroundColor: color }}
               >
                 <Circle />
               </div>
@@ -43,7 +44,8 @@ export default function notes() {
               </p>
 
               <span
-                className={`hidden rounded-md sm:block px-2 py-1 text-xs font-medium ${color}`}
+                className={`hidden rounded-md sm:block px-2 py-1 text-xs font-medium`}
+                style={{ backgroundColor: color }}
               >
                 {note.course}
               </span>

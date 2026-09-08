@@ -148,6 +148,20 @@ export default Extension.create<CustomShortcutOptions>({
           this.options.onMathBlock?.();
         },
       }),
+
+      new InputRule({
+        find: /\/\/table-(\d+)-(\d+)\s$/,
+
+        handler: ({ state, range, chain, match })=>{
+          const righe = parseInt(match[1], 10);
+          const colonne = parseInt(match[2], 10);
+
+          chain()
+            .deleteRange(range)
+            .insertTable({ rows: righe, cols: colonne, withHeaderRow: true })
+            .run();
+        },
+      }),
     ];
   },
 });

@@ -89,7 +89,8 @@ export default function HomepageNotes() {
                 <div className="flex min-w-0 items-center gap-4">
                   {/* Icon */}
                   <div
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${color}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg`}
+                    style={{ backgroundColor: color }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

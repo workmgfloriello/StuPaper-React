@@ -18,7 +18,7 @@ export default function HomepageCourses() {
     notesCount: 0,
     description: "",
     year: 0,
-    recent:false,
+    recent: false,
     color: "",
   });
 
@@ -45,7 +45,7 @@ export default function HomepageCourses() {
       semester: Number(formData.semester),
       notesCount: 0,
       description: formData.description,
-      color: "bg-red-100 text-green-500",
+      color: formData.color,
       recent: false,
       year: formData.year,
     };
@@ -310,7 +310,8 @@ export default function HomepageCourses() {
             {/* Badge */}
             <div className="mb-5 flex items-center justify-between">
               <span
-                className={`rounded-lg px-3 py-1 text-xs font-semibold ${course.color}`}
+                style={{ backgroundColor: course.color }}
+                className={`rounded-lg px-3 py-1 text-xs font-semibold`}
               >
                 {course.code}
               </span>
