@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { type Editor } from "@tiptap/react";
+
 import {
   Bold,
   Italic,
@@ -169,6 +170,126 @@ function ColorPicker({ editor }: { editor: Editor }) {
           >
             Rimuovi colore
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface TableMenuItem {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  danger?: boolean;
+}
+
+function TableMenu({ editor }: { editor: Editor }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Chiude il popup se si clicca fuori
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const run = (action: () => void) => {
+    action();
+    setIsOpen(false);
+  };
+
+  const items: TableMenuItem[] = [
+    {
+      label: "Inserisci tabella",
+      icon: <Table2 size={15} />,
+      onClick: () =>
+        run(() =>
+          editor
+            .chain()
+            .focus()
+            .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+            .run()
+        ),
+    },
+    {
+      label: "Inserisci riga sopra",
+      icon: <Rows3 size={15} />,
+      onClick: () => run(() => editor.chain().focus().addRowBefore().run()),
+    },
+    {
+      label: "Inserisci riga sotto",
+      icon: <Rows4 size={15} />,
+      onClick: () => run(() => editor.chain().focus().addRowAfter().run()),
+    },
+    {
+      label: "Elimina riga",
+      icon: <Rows3 size={15} />,
+      onClick: () => run(() => editor.chain().focus().deleteRow().run()),
+      danger: true,
+    },
+    {
+      label: "Inserisci colonna a sinistra",
+      icon: <Columns3 size={15} />,
+      onClick: () =>
+        run(() => editor.chain().focus().addColumnBefore().run()),
+    },
+    {
+      label: "Inserisci colonna a destra",
+      icon: <Columns4 size={15} />,
+      onClick: () => run(() => editor.chain().focus().addColumnAfter().run()),
+    },
+    {
+      label: "Elimina colonna",
+      icon: <Columns3 size={15} />,
+      onClick: () => run(() => editor.chain().focus().deleteColumn().run()),
+      danger: true,
+    },
+    {
+      label: "Elimina tabella",
+      icon: <Trash2 size={15} />,
+      onClick: () => run(() => editor.chain().focus().deleteTable().run()),
+      danger: true,
+    },
+  ];
+
+ return (
+    <div ref={containerRef} className="relative flex items-center">
+      <button
+        type="button"
+        title="Tabella"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className={`flex h-8 items-center gap-1 rounded-md px-2 text-sm text-indigo-700 hover:bg-indigo-100 ${
+          isOpen ? "bg-indigo-100" : ""
+        }`}
+      >
+        <Table2 size={16} />
+        <span className="hidden sm:inline">Tabella</span>
+        <ChevronDown size={12} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-lg border border-indigo-200 bg-white p-1 shadow-lg">
+          {items.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={item.onClick}
+              className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-indigo-100 ${
+                item.danger ? "text-red-600 hover:bg-red-50" : "text-indigo-800"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          ))}
         </div>
       )}
     </div>
@@ -399,69 +520,10 @@ export default function TopBar({ editor, onMathClick }: TopBarProps) {
         <SquareFunction size={16} />
       </ToolbarButton>
 
-      {/* Tabelle */}
+      <Divider />
 
-      <ToolbarButton
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-            .run()
-        }
-        title="Inserisci Tabella"
-      >
-        <Table2 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().addRowBefore().run()}
-        title="Inserisci Riga Sopra"
-      >
-        <Rows3 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().addRowAfter().run()}
-        title="Inserisci Riga Sotto"
-      >
-        <Rows4 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().deleteRow().run()}
-        title="Elimina Riga"
-      >
-        <Rows3 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().addColumnBefore().run()}
-        title="Inserisci Colonna a Sinistra"
-      >
-        <Columns3 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().addColumnAfter().run()}
-        title="Inserisci Colonna a Destra"
-      >
-        <Columns4 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().deleteColumn().run()}
-        title="Elimina Colonna"
-      >
-        <Columns3 size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().deleteTable().run()}
-        title="Elimina Tabella"
-      >
-        <Trash2 size={16} />
-      </ToolbarButton>
+      {/* Tabelle: menu a tendina */}
+      <TableMenu editor={editor} />
     </div>
   );
 }

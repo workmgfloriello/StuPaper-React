@@ -1,4 +1,4 @@
-import { Extension, InputRule } from "@tiptap/core";
+import { Extension, InputRule, newlineInCode } from "@tiptap/core";
 
 interface CustomShortcutOptions {
   onMathBlock?: () => void;
@@ -146,6 +146,18 @@ export default Extension.create<CustomShortcutOptions>({
             })
             .run();
           this.options.onMathBlock?.();
+        },
+      }),
+
+      new InputRule({
+        find: /\/\/table-(\d+)-(\d+)\s$/,
+        handler: ({ range, match, chain }) => {
+          const row = parseInt(match[1], 10);
+          const column = parseInt(match[2], 10);
+
+          chain()
+            .deleteRange(range)
+            .insertTable({ rows: row, cols: column, withHeaderRow: true });
         },
       }),
     ];

@@ -44,7 +44,7 @@ export default function Sidebar() {
 
   //CHIUDI SE Ti TROVI NELL'EDITOR
   useEffect(() => {
-    if(pathname==="/editor"){
+    if (pathname === "/editor") {
       setOpen(false);
     }
   }, [pathname]);
@@ -253,9 +253,9 @@ export default function Sidebar() {
                             justify-center
                             rounded-md
                             text-[10px]
-                            font-semibold
-                            ${course.color}
+                            font-semibold      
                           `}
+                          style={{ backgroundColor: course.color }}
                         >
                           {course.code}
                         </span>
@@ -303,4 +303,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-

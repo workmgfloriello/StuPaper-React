@@ -1,6 +1,7 @@
 "use client";
 import { Course } from "@/interface/interface.tsx";
 import { useCourses } from "@/lib/context/CoursesContext";
+import { generateUUID } from "@/lib/utils/uuid";
 import { useState } from "react";
 
 export default function HomepageCourses() {
@@ -18,7 +19,7 @@ export default function HomepageCourses() {
     notesCount: 0,
     description: "",
     year: 0,
-    recent:false,
+    recent: false,
     color: "",
   });
 
@@ -37,7 +38,7 @@ export default function HomepageCourses() {
     e.preventDefault();
 
     const newCourse: Course = {
-      id: formData.name.toLowerCase().replace(/\s+/g, "-"),
+      id: generateUUID().toString(),
       name: formData.name,
       code: formData.code,
       professor: formData.professor,
@@ -45,7 +46,7 @@ export default function HomepageCourses() {
       semester: Number(formData.semester),
       notesCount: 0,
       description: formData.description,
-      color: "bg-red-100 text-green-500",
+      color: formData.color,
       recent: false,
       year: formData.year,
     };
@@ -53,7 +54,9 @@ export default function HomepageCourses() {
     setCourses((prev) => [...prev, newCourse]);
 
     try {
-      const dbInsert = await (window.electronAPI as any)?.insertCourse(newCourse);
+      const dbInsert = await (window.electronAPI as any)?.insertCourse(
+        newCourse,
+      );
       console.log(dbInsert);
     } catch (error) {
       console.error("Error inserting course:", error);
@@ -70,7 +73,7 @@ export default function HomepageCourses() {
       description: "",
       year: 1,
       recent: false,
-      color: "bg-indigo-100 text-indigo-700",
+      color: "#6366f1",
     });
 
     setShowForm(false);
@@ -275,12 +278,12 @@ export default function HomepageCourses() {
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Colore
               </label>
+
               <input
                 type="color"
                 name="color"
-                value={formData.color}
+                value={formData.color || "#6366f1"}
                 onChange={handleChange}
-                placeholder="Colore del corso"
                 required
                 className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-indigo-500"
               />
@@ -310,7 +313,8 @@ export default function HomepageCourses() {
             {/* Badge */}
             <div className="mb-5 flex items-center justify-between">
               <span
-                className={`rounded-lg px-3 py-1 text-xs font-semibold ${course.color}`}
+                className={`rounded-lg px-3 py-1 text-xs font-semibold bg-[${course.color}] text-black`}
+                style={{ backgroundColor: course.color }}
               >
                 {course.code}
               </span>

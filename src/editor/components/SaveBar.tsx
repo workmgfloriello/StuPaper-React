@@ -74,7 +74,7 @@ export default function SaveBar({ editor }: SaveBarProps) {
 
   const handleSaveClick = () => {
     console.log("SALVO CON NOME");
-    FileManager.saveFileWithName();
+    FileManager.saveFile();
     setOpen(false);
   };
 

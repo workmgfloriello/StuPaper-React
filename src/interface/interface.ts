@@ -23,3 +23,12 @@ export type FileData = {
   name: string;
   lastEdit: Date;
 };
+
+export type File = {
+  id:string,
+  name:string,
+  directory:string,
+  course:string,
+  description?:string,
+  createAt: Date,
+}

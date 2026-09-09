@@ -7,16 +7,22 @@ import Home from "./pages/Home";
 import CorsiPage from "./pages/CorsiPage";
 import AppuntiPage from "./pages/AppuntiPage";
 import EditorPage from "./pages/EditorPage";
+import CreateAppuntiPage from "./pages/CreateAppuntiPage";
+import RouteWatcher from "./RouteWatcher";
 
 export default function App() {
   return (
     <CoursesProvider>
       <NotesProvider>
         <HashRouter>
+
+          <RouteWatcher />
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/corsi" element={<CorsiPage />} />
             <Route path="/appunti" element={<AppuntiPage />} />
+            <Route path="/newappunti" element={<CreateAppuntiPage/>} />
             <Route path="/editor" element={<EditorPage />} />
           </Routes>
         </HashRouter>

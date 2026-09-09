@@ -7,6 +7,12 @@ import type { Course } from "../src/interface/interface.ts";
 
 let db: DatabaseSync | null = null;
 
+/**
+ * =========================
+ * DATABASE
+ * =========================
+ */
+
 export function getDatabase(): DatabaseSync {
   if (db) {
     return db;
@@ -14,13 +20,15 @@ export function getDatabase(): DatabaseSync {
 
   const dataPath = app.getPath("userData");
 
-  fs.mkdirSync(dataPath, { recursive: true });
+  fs.mkdirSync(dataPath, {
+    recursive: true,
+  });
 
   const dbPath = path.join(dataPath, "stupaperBase.db");
 
   db = new DatabaseSync(dbPath);
 
-  // Foreign keys
+  // Abilita foreign keys
   db.exec("PRAGMA foreign_keys = ON");
 
   initializeDatabase(db);
@@ -82,7 +90,12 @@ function initializeDatabase(database: DatabaseSync) {
   `);
 }
 
-// Course
+/**
+ * =========================
+ * COURSES
+ * =========================
+ */
+
 export function insertCourse(course: Course) {
   const database = getDatabase();
 
@@ -123,9 +136,22 @@ export function insertCourse(course: Course) {
 export function selectCourses() {
   const database = getDatabase();
 
-  const courses = database
+  return database
     .prepare("SELECT * FROM courses")
     .all();
-
-  return courses;
 }
+
+/**
+ * =========================
+ * NOTES
+ * =========================
+ */
+
+export function selectNotes() {
+  const database = getDatabase();
+
+  return database
+    .prepare("SELECT * FROM notes")
+    .all();
+}
+

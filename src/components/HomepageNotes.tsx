@@ -2,6 +2,7 @@
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useNotes } from "@/lib/context/NotesContext.tsx";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomepageNotes() {
   const { notes } = useNotes();
@@ -52,17 +53,22 @@ export default function HomepageNotes() {
               </option>
             ))}
           </select>
+          <Link
+            to="/newappunti"
+            className="rounded-lg bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+          >
+            + Crea appunto
+          </Link>
         </div>
 
         {/* Notes */}
         <div className="space-y-3">
           {notes.map((note) => {
-            
             // Filtro select corso
             if (selectedCourse !== "all" && note.course !== selectedCourse) {
               return false;
             }
-            
+
             // Filtro barra di ricerca
             if (
               textCourse !== "" &&

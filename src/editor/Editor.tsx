@@ -32,7 +32,7 @@ import SaveBar from "./components/SaveBar";
 import CustomShortCut from "./extension/CustomShortcut";
 import MathPanel from "./components/MathPanel";
 import CustomBlockquote from "./extension/CustomBlockquote";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const lowlight = createLowlight({
   javascript,
@@ -180,7 +180,7 @@ export default function Editor({
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-gray-200">
       {/* TOOLBAR */}
-      <div className="mt-2 flex flex-col items-center">
+      <div className="mt-2 flex flex-col items-center relative z-50">
         <div className="flex items-center justify-center gap-5 align-middle">
           {showMathPanel ? (
             <ToolbarFade key="math">
@@ -201,7 +201,7 @@ export default function Editor({
       </div>
 
       {/* EDITOR */}
-      <div className="mx-auto mt-5 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white h-auto">
+      <div className="mx-auto mt-5 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white h-auto relative z-10">
         <EditorContent editor={editor} />
       </div>
 

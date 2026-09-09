@@ -1,4 +1,4 @@
-import { FileData } from "@/interface/interface";
+import { File } from "@/interface/interface";
 import { Editor } from "@tiptap/react";
 
 interface SaveFilePickerOptions {
@@ -19,7 +19,10 @@ interface OpenFilePickerOptions {
 
 interface ElectronApi {
   exportPDF?: () => void | Promise<void>;
+  openFile?: () => any;
+  saveFile? : (data: any, name: any)=> any;
 }
+
 declare global {
   interface Window {
     electronAPI?: ElectronApi;
@@ -34,116 +37,51 @@ declare global {
 
 class CustomFileManager {
   private editor: Editor | null = null;
-  private fileHandle: FileSystemFileHandle | null = null;
-  private fileData!: FileData;
+  private fileData: { name: string; data: any; } | undefined;
 
   setEditor(editor: Editor) {
     this.editor = editor;
   }
 
-  async saveFileWithName(): Promise<void> {
+  async openFile() {
     if (!this.editor) {
       console.error("Editor non impostato");
       return;
     }
 
-    if (!window.showSaveFilePicker) {
-      console.error("File System Access API non supportata");
+    const openFile = window.electronAPI?.openFile;
+    if (!openFile) {
+      console.error("Apertura file non disponibile");
       return;
     }
 
-    try {
-      const content = this.editor.getJSON();
+    const file = await openFile();
+    const jsonFile = JSON.parse(file)
+    this.editor.commands.setContent(jsonFile);
 
-      const fileHandle = await window.showSaveFilePicker({
-        suggestedName: "documento.json",
-        types: [
-          {
-            description: "Documento JSON",
-            accept: {
-              "application/json": [".json"],
-            },
-          },
-        ],
-      });
-
-      const writable = await fileHandle.createWritable();
-
-      await writable.write(JSON.stringify(content, null, 2));
-
-      await writable.close();
-
-      console.log("Documento salvato!");
-    } catch (error) {
-      // L'utente ha premuto "Annulla"
-      if (error instanceof DOMException && error.name === "AbortError") {
-        console.log("Salvataggio annullato");
-        return;
-      }
-
-      console.error("Errore durante il salvataggio:", error);
-    }
+    //salvo info importanti per salvare file dopo
+    this.setFileData(jsonFile.metadata.name,jsonFile); 
   }
 
-  async openFile(): Promise<void> {
+  async saveFile() {
     if (!this.editor) {
       console.error("Editor non impostato");
       return;
     }
 
-    if (!window.showOpenFilePicker) {
-      throw new Error(
-        "The File System Access API is not supported in this browser.",
-      );
+    const saveFile = window.electronAPI?.saveFile;
+    if(!saveFile){
+       console.error("Salvataggio file non disponibile");
+      return;
     }
 
-    try {
-      const [fileHandle] = await window.showOpenFilePicker({
-        multiple: false,
-        types: [
-          {
-            description: "File JSON",
-            accept: {
-              "application/json": [".json"],
-            },
-          },
-        ],
-      });
+    const content = this.getEditorContentJSON();
+    const fileData = this.getFileData();
+    if (!fileData) return;
+    const { name, data } = fileData;
 
-      this.fileHandle = fileHandle;
-
-      const file = await fileHandle.getFile();
-      const text = await file.text();
-
-      const content = JSON.parse(text);
-
-      this.editor.commands.setContent(content);
-      this.editor.commands.focus();
-
-      console.log("Documento aperto:", file.name);
-
-      this.setFileData(file.name, new Date(file.lastModified));
-      console.log(this.getFileData());
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        console.log("Apertura annullata");
-        return;
-      }
-
-      console.error("Errore apertura file:", error);
-      throw error;
-    }
-  }
-
-  async saveFile(): Promise<void> {
-    if (!this.fileHandle && !this.editor) return;
-
-    const content = this.editor?.getJSON();
-    const writable = await this.fileHandle?.createWritable();
-
-    await writable?.write(JSON.stringify(content, null, 2));
-
-    await writable?.close();
+    const save = await saveFile(content,name);
+    console.log(save);
   }
 
   exportPDF() {
@@ -155,15 +93,21 @@ class CustomFileManager {
     window.electronAPI.exportPDF();
   }
 
-  private setFileData(name: string, lastEdit: Date) {
-    this.fileData = {
-      name: name,
-      lastEdit: lastEdit,
-    };
-  }
-
   getFileData() {
     return this.fileData;
+  } 
+
+  private setFileData(name: string, data:any) {
+    this.fileData = { name, data };
+  }
+
+  private getEditorContentJSON(){
+    if(!this.editor) return;
+    return this.editor.getJSON().content;
+  }
+
+  closeFile(){
+    this.fileData = undefined
   }
 }
 

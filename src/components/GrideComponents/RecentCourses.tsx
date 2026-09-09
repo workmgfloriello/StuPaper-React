@@ -30,7 +30,8 @@ export default function RecentCourses() {
             {/* Card header */}
             <div className="flex items-start justify-between">
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${course.color}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs font-bold`}
+                style={{ backgroundColor: course.color }}
               >
                 {course.code}
               </div>
