@@ -253,7 +253,8 @@ export default function Sidebar() {
                             justify-center
                             rounded-md
                             text-[10px]
-                            font-semibold      
+                            font-semibold
+                            ${course.color}
                           `}
                           style={{ backgroundColor: course.color }}
                         >

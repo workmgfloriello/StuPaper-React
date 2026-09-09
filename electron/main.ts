@@ -12,6 +12,7 @@ const isDev = !app.isPackaged;
 
 let win: BrowserWindow;
 
+
 function createWindow() {
   win = new BrowserWindow({
     width: 1400,
@@ -60,3 +61,4 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
