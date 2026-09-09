@@ -313,7 +313,8 @@ export default function HomepageCourses() {
             {/* Badge */}
             <div className="mb-5 flex items-center justify-between">
               <span
-                className={`rounded-lg px-3 py-1 text-xs font-semibold ${course.color}`}
+                className={`rounded-lg px-3 py-1 text-xs font-semibold`}
+                style={{ backgroundColor: course.color }}
               >
                 {course.code}
               </span>
