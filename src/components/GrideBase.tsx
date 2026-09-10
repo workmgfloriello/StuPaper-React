@@ -6,19 +6,7 @@ import Welcome from "./Welcome";
 
 export default function GrideBase() {
   return (
-    <div
-      className="
-    grid
-    h-full
-    min-h-0
-    w-full
-    grid-cols-4
-    grid-rows-[100px_minmax(0,1fr)_minmax(0,1fr)]
-    gap-4
-    overflow-hidden
-    p-4
-  "
-    >
+    <div className="grid h-full min-h-0 w-full grid-cols-4 grid-rows-[100px_minmax(0,1fr)_minmax(0,1fr)] gap-4 overflow-hidden bg-gray-50 p-4 transition-colors dark:bg-[#181818]">
       {/* Welcome */}
       <div className="min-h-0 min-w-0 lg:col-span-4">
         <Welcome />

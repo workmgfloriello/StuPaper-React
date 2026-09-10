@@ -1,7 +1,7 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
 
 import { CoursesProvider } from "./lib/context/CoursesContext";
-import { FilesProvider} from "./lib/context/NotesContext";
+import { FilesProvider } from "./lib/context/NotesContext";
 
 import Home from "./pages/Home";
 import CorsiPage from "./pages/CorsiPage";
@@ -11,6 +11,7 @@ import CreateAppuntiPage from "./pages/CreateAppuntiPage";
 import RouteWatcher from "./RouteWatcher";
 import FrameTopbar from "./FrameTopbar";
 import Editor from "./editor/Editor";
+import { ThemeProvider } from "./lib/context/ThemeContext";
 
 export default function App() {
   return (
@@ -22,19 +23,22 @@ export default function App() {
       <div className="min-h-0 flex-1 overflow-hidden">
         <CoursesProvider>
           <FilesProvider>
+            <ThemeProvider>
             <HashRouter>
               <RouteWatcher />
 
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/corsi" element={<CorsiPage />} />
-                <Route path="/appunti" element={<AppuntiPage />} />
-                <Route path="/newappunti" element={<CreateAppuntiPage />} />
-
+                
+                  <Route path="/" element={<Home />} />
+                  <Route path="/corsi" element={<CorsiPage />} />
+                  <Route path="/appunti" element={<AppuntiPage />} />
+                  <Route path="/newappunti" element={<CreateAppuntiPage />} />
+                
                 {/* Route editor */}
                 <Route path="/editor/:fileName" element={<Editor />} />
               </Routes>
             </HashRouter>
+            </ThemeProvider>
           </FilesProvider>
         </CoursesProvider>
       </div>
