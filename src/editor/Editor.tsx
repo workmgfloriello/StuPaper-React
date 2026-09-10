@@ -28,13 +28,15 @@ import java from "highlight.js/lib/languages/java";
 import cpp from "highlight.js/lib/languages/cpp";
 
 import TopBar from "./components/TopBar";
-import SaveBar from "./components/SaveBar";
 import CustomShortCut from "./extension/CustomShortcut";
 import MathPanel from "./components/MathPanel";
 import CustomBlockquote from "./extension/CustomBlockquote";
 import { useEffect, useState, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import FileManager from "./extension/FileManager";
+import FileBar from "./components/FileBar";
+import BottomBar from "./components/BottomBar";
+import Sidebar from "@/components/Sidebar";
 
 const lowlight = createLowlight({
   javascript,
@@ -155,6 +157,7 @@ export default function Editor({
 
   const [showMathPanel, setShowMathPanel] = useState(false);
   const { fileName } = useParams();
+  const [fileMetadata, setFileMetadata] = useState<any>()
 
   const handleMathInsert = (latex: string) => {
     editor
@@ -184,42 +187,49 @@ export default function Editor({
     if (!editor) return;
 
     FileManager.setEditor(editor);
-    FileManager.openFile(fileName);
+
+    const openFile = async () => {
+      const file = await FileManager.openFile(fileName);
+      setFileMetadata(file);
+    };
+
+    void openFile();
   }, [editor, fileName]);
 
   return (
-  <div className="flex h-full w-full flex-col overflow-hidden bg-gray-200 dark:bg-[#181818]">
-    {/* TOOLBAR */}
-    <div className="relative z-50 mt-2 flex flex-col items-center">
-      <div className="flex items-center justify-center gap-5 align-middle">
-        {showMathPanel ? (
-          <ToolbarFade key="math">
-            {editor && (
-              <MathPanel onInsert={handleMathInsert} onClose={handleMathClose} />
-            )}
-          </ToolbarFade>
-        ) : (
-          <ToolbarFade key="classic">
-            <TopBar editor={editor} onMathClick={handleMathClick} />
-          </ToolbarFade>
-        )}
+    <div className="flex h-full w-full flex-col overflow-hidden bg-gray-200 dark:bg-[#181818]">
+  
+      {/* TOOLBAR */}
+      <div className="relative z-50 mt-2 flex flex-col items-center">
+        <div className="flex items-center justify-center gap-5 align-middle">
+          {showMathPanel ? (
+            <ToolbarFade key="math">
+              {editor && (
+                <MathPanel
+                  onInsert={handleMathInsert}
+                  onClose={handleMathClose}
+                />
+              )}
+            </ToolbarFade>
+          ) : (
+            <ToolbarFade key="classic">
+              <TopBar editor={editor} onMathClick={handleMathClick} />
+            </ToolbarFade>
+          )}
 
-        <SaveBar editor={editor} />
+          <FileBar editor={editor} fileMeta={fileMetadata} />
+        </div>
+      </div>
+
+      {/* EDITOR */}
+      <div className="relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white dark:border-[#303030]">
+        <EditorContent editor={editor} />
+      </div>
+
+      {/* FOOTER */}
+      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-3 py-1 text-xs text-gray-500 dark:border-[#303030] dark:bg-[#252526] dark:text-[#9d9d9d]">
+        <BottomBar fileMeta={fileMetadata}/>
       </div>
     </div>
-
-    {/* EDITOR */}
-    <div className="relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white dark:border-[#303030]">
-      <EditorContent editor={editor} />
-    </div>
-
-    {/* FOOTER */}
-    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-3 py-1 text-xs text-gray-500 dark:border-[#303030] dark:bg-[#252526] dark:text-[#9d9d9d]">
-      <span>
-        Informatica 4.0 - Progetto di Tecnologie Web e Mobile - A.A. 2023/2024
-      </span>
-      <span>04/09/2026</span>
-    </div>
-  </div>
-);
+  );
 }

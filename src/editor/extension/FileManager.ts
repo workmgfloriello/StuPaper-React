@@ -1,7 +1,6 @@
 import { File } from "@/interface/interface";
 import { Editor } from "@tiptap/react";
 
-
 interface SaveFilePickerOptions {
   suggestedName?: string;
   types?: Array<{
@@ -23,6 +22,7 @@ interface ElectronApi {
   exportPDF?: () => void | Promise<void>;
   openFile?: (fileName: string) => any;
   saveFile?: (data: any, name: any) => any;
+  delateFile?: (fileName: string) => any;
 }
 
 declare global {
@@ -39,35 +39,48 @@ declare global {
 
 class CustomFileManager {
   private editor: Editor | null = null;
-  private fileData: { name: string; data: any } | undefined;
+  private fileData: { name: string; course: string; data: any } | undefined;
 
   setEditor(editor: Editor) {
     this.editor = editor;
   }
 
   async createFile(file: File) {
-   const create = window.electronAPI?.createFile?.(file);
-   return create;
+    const create = window.electronAPI?.createFile?.(file);
+    return create;
   }
 
   async openFile(fileName: string = "") {
-    if (!this.editor) {
-      console.error("Editor non impostato");
-      return;
-    }
-
     const openFile = window.electronAPI?.openFile;
+
     if (!openFile) {
       console.error("Apertura file non disponibile");
       return;
     }
 
+    if (fileName === "") {
+      const selectedFileName = await openFile("");
+
+      return selectedFileName;
+    }
+
+    if (!this.editor) {
+      console.error("Editor non impostato");
+      return;
+    }
+
     const file = await openFile(fileName);
     const jsonFile = JSON.parse(file);
+
     this.editor.commands.setContent(jsonFile);
 
-    //salvo info importanti per salvare file dopo
-    this.setFileData(jsonFile.metadata.name, jsonFile);
+    this.setFileData(
+      jsonFile.metadata.name,
+      jsonFile.metadata.course,
+      jsonFile,
+    );
+
+    return this.fileData;
   }
 
   async saveFile() {
@@ -91,6 +104,10 @@ class CustomFileManager {
     console.log(save);
   }
 
+  delateFile(fileName: string){
+    const delate = window.electronAPI?.delateFile?.(fileName);
+    return delate;
+  }
   exportPDF() {
     // Funzione che permette di esportare in PDF
     if (!window.electronAPI?.exportPDF) {
@@ -100,21 +117,22 @@ class CustomFileManager {
     window.electronAPI.exportPDF();
   }
 
+  closeFile() {
+    this.fileData = undefined;
+  }
+
+  //UTIL
   getFileData() {
     return this.fileData;
   }
 
-  private setFileData(name: string, data: any) {
-    this.fileData = { name, data };
+  private setFileData(name: string, course: string, data: any) {
+    this.fileData = { name, course, data };
   }
 
   private getEditorContentJSON() {
     if (!this.editor) return;
     return this.editor.getJSON().content;
-  }
-
-  closeFile() {
-    this.fileData = undefined;
   }
 }
 

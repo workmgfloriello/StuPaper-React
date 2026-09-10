@@ -2,18 +2,19 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   //window
-  minimize: () => ipcRenderer.send('window-minimize'),
-  maximize: () => ipcRenderer.send('window-maximize'),
-  close: () => ipcRenderer.send('window-close'),
-  
+  minimize: () => ipcRenderer.send("window-minimize"),
+  maximize: () => ipcRenderer.send("window-maximize"),
+  close: () => ipcRenderer.send("window-close"),
+
   //file
-  openFile: (fileName) => ipcRenderer.invoke("file:open",fileName),
-  createFile: (file) => ipcRenderer.invoke("file:create",file),
-  saveFile: (data, name) =>ipcRenderer.invoke("file:save",data,name),
+  openFile: (fileName) => ipcRenderer.invoke("file:open", fileName),
+  createFile: (file) => ipcRenderer.invoke("file:create", file),
+  saveFile: (data, name) => ipcRenderer.invoke("file:save", data, name),
   exportPDF: () => ipcRenderer.invoke("export-pdf"),
-  selectFile: () => ipcRenderer.invoke("file:select") ,
+  selectFile: () => ipcRenderer.invoke("file:select"),
+  delateFile: (fileName) => ipcRenderer.invoke("file:delate",fileName),
+  
   //course
   insertCourse: (course) => ipcRenderer.invoke("courses:insert", course),
   selectCourses: () => ipcRenderer.invoke("courses:select"),
-})
-
+});

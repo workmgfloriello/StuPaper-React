@@ -10,8 +10,8 @@ import CreateAppuntiPage from "./pages/CreateAppuntiPage";
 
 import RouteWatcher from "./RouteWatcher";
 import FrameTopbar from "./FrameTopbar";
-import Editor from "./editor/Editor";
 import { ThemeProvider } from "./lib/context/ThemeContext";
+import EditorPage from "./pages/EditorPage";
 
 export default function App() {
   return (
@@ -24,20 +24,19 @@ export default function App() {
         <CoursesProvider>
           <FilesProvider>
             <ThemeProvider>
-            <HashRouter>
-              <RouteWatcher />
+              <HashRouter>
+                <RouteWatcher />
 
-              <Routes>
-                
+                <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/corsi" element={<CorsiPage />} />
                   <Route path="/appunti" element={<AppuntiPage />} />
                   <Route path="/newappunti" element={<CreateAppuntiPage />} />
-                
-                {/* Route editor */}
-                <Route path="/editor/:fileName" element={<Editor />} />
-              </Routes>
-            </HashRouter>
+
+                  {/* Route editor */}
+                  <Route path="/editor/:fileName" element={<EditorPage />} />
+                </Routes>
+              </HashRouter>
             </ThemeProvider>
           </FilesProvider>
         </CoursesProvider>

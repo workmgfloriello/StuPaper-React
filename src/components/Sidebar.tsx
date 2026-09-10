@@ -45,7 +45,7 @@ export default function Sidebar() {
 
   //CHIUDI SE Ti TROVI NELL'EDITOR
   useEffect(() => {
-    if (pathname === "/editor") {
+    if (pathname.startsWith("/editor")) {
       setOpen(false);
     }
   }, [pathname]);

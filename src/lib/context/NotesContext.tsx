@@ -1,4 +1,5 @@
 "use client";
+
 import {
   createContext,
   Dispatch,
@@ -9,10 +10,12 @@ import {
   useState,
 } from "react";
 import { File } from "@/interface/interface";
+import FileManager from "../../editor/extension/FileManager";
 
 type FilesContextType = {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
+  deleteFile: (fileName: string) => Promise<any>;
 };
 
 const FilesContext = createContext<FilesContextType | null>(null);
@@ -34,6 +37,7 @@ export function FilesProvider({ children }: { children: ReactNode }) {
         }
 
         const loadedFiles = await electronAPI.selectFile();
+
         setFiles(loadedFiles);
       } catch (error) {
         console.error("Errore caricamento File:", error);
@@ -43,8 +47,20 @@ export function FilesProvider({ children }: { children: ReactNode }) {
     loadFiles();
   }, []);
 
+  async function deleteFile(fileName: string) {
+    const result = await FileManager.delateFile(fileName);
+
+    if (result?.success) {
+      setFiles((currentFiles) =>
+        currentFiles.filter((file) => file.name !== fileName)
+      );
+    }
+
+    return result;
+  }
+
   return (
-    <FilesContext.Provider value={{ files, setFiles }}>
+    <FilesContext.Provider value={{ files, setFiles, deleteFile }}>
       {children}
     </FilesContext.Provider>
   );
@@ -54,7 +70,7 @@ export function useFiles() {
   const context = useContext(FilesContext);
 
   if (!context) {
-    throw new Error("useCourses must be used within a CoursesProvider");
+    throw new Error("useFiles must be used within a FilesProvider");
   }
 
   return context;

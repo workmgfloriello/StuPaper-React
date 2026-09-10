@@ -2,7 +2,7 @@ import { ipcMain, dialog, BrowserWindow } from "electron";
 import fs from "fs";
 import path from "path";
 
-import { insertNotes, selectNotes } from "../../database/ManageDatabase.ts";
+import { delateNotes, insertNotes, selectNotes } from "../../database/ManageDatabase.ts";
 
 import type { File } from "../../src/interface/interface.ts";
 
@@ -64,7 +64,7 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
               id: file.id,
               name: file.name,
               createAt: file.created_at.toISOString(),
-              course:file.course,
+              course: file.course,
             },
             type: "doc",
             content: [],
@@ -87,15 +87,14 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
 
       if (canceled || filePaths.length === 0) {
         return null;
-      } else {
-        //Leggi contenuto file
-        const content = fs.readFileSync(filePaths[0], "utf-8");
-        return content;
       }
-    }else{
-      const content = fs.readFileSync(`${dirPath}/${fileName}.json`,"utf-8");
-      return content;
+
+      return path.basename(filePaths[0], ".json");
     }
+
+    const content = fs.readFileSync(`${dirPath}/${fileName}.json`, "utf-8");
+
+    return content;
   });
 
   //salva File
@@ -131,8 +130,16 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
     }
   });
 
+  //eliminare File
+ipcMain.handle("file:delate", async (_event, fileName: string) => {
+  const filePath = path.join(dirPath, `${fileName}.json`);
+  fs.unlinkSync(filePath);
+  delateNotes(fileName);
+  return { success: true };
+});
+
   //selezione file REF dal db
-  ipcMain.handle("file:select",async () =>{
+  ipcMain.handle("file:select", async () => {
     return selectNotes();
-  })
+  });
 }

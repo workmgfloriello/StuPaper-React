@@ -162,5 +162,17 @@ export function selectNotes() {
     .all();
 }
 
+export function delateNotes(name: string) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    DELETE FROM notes
+    WHERE name = ?
+  `);
+
+  const result = stmt.run(name);
+
+  return result;
+}
 
 
