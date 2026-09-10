@@ -1,11 +1,11 @@
 "use client";
 import { useCourses } from "@/lib/context/CoursesContext";
-import { useNotes } from "@/lib/context/NotesContext.tsx";
+import { useFiles } from "@/lib/context/NotesContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function HomepageNotes() {
-  const { notes } = useNotes();
+  const { files } = useFiles();
   const { courses } = useCourses();
 
   const [selectedCourse, setSelectedCourse] = useState("all");
@@ -20,7 +20,7 @@ export default function HomepageNotes() {
     console.log(e.target.value);
     setTextCourse(e.target.value);
   };
-
+console.log(files)
   return (
     <main className=" bg-gray-50 px-6 py-8">
       <div className="mx-auto max-w-5xl">
@@ -63,7 +63,7 @@ export default function HomepageNotes() {
 
         {/* Notes */}
         <div className="space-y-3">
-          {notes.map((note) => {
+          {files.map((note) => {
             // Filtro select corso
             if (selectedCourse !== "all" && note.course !== selectedCourse) {
               return false;
@@ -78,9 +78,12 @@ export default function HomepageNotes() {
             }
 
             let color = "";
+console.log(note)
             const findColor = courses.find(
-              (course) => note.course == course.id,
+              (course) => course.id == note.course,
             );
+            console.log(findColor)
+
             if (findColor?.color) {
               color = findColor.color;
             } else {
@@ -126,11 +129,9 @@ export default function HomepageNotes() {
                       <span className="text-gray-300">•</span>
 
                       <span>
-                        {note.data.toLocaleDateString("it-IT", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {note.created_at
+                          ? new Date(note.created_at).toLocaleDateString("it-IT")
+                          : "Nessuna data"}
                       </span>
                     </div>
                   </div>
@@ -159,7 +160,7 @@ export default function HomepageNotes() {
         </div>
 
         {/* Empty state */}
-        {notes.length === 0 && (
+        {files.length === 0 && (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white py-16 text-center">
             <h2 className="font-semibold text-gray-800">Nessun appunto</h2>
 

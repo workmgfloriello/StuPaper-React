@@ -113,7 +113,7 @@ export default function Sidebar() {
       {/* Nuovo appunto */}
       <div className="shrink-0 px-3">
         <Link
-          to="/editor"
+          to="/newappunti"
           className="
             flex
             h-10

@@ -2,10 +2,11 @@ import FileManager from "@/editor/extension/FileManager";
 import { File } from "@/interface/interface";
 import { useCourses } from "@/lib/context/CoursesContext";
 import { generateUUID } from "@/lib/utils/uuid";
-import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateAppuntiPage() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
@@ -24,22 +25,20 @@ export default function CreateAppuntiPage() {
       name: name,
       directory: description,
       course: course,
-      createAt: new Date(),
+      created_at: new Date(),
     };
 
-   const create =  await FileManager.createFile(newFile);
-   console.log(create)
+    const create = await FileManager.createFile(newFile);
+    console.log(create);
+
+    //passo all' editor() il fileName via url
+    navigate(`/editor/${newFile.name}`)
   };
 
+
   return (
-    
-      <><div
-      onClick={() => window.history.back()}
-      className="absolute left-6 top-6 flex cursor-pointer items-center gap-2 rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 shadow-sm transition hover:bg-indigo-50"
-    >
-      <ArrowLeft size={18} />
-      <span>Torna indietro</span>
-    </div><div className="flex min-h-screen items-center justify-center bg-indigo-50/60 p-6">
+    <>
+      <div className="flex min-h-full items-center justify-center bg-indigo-50/60 p-6">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-lg space-y-6 rounded-2xl border border-indigo-100 bg-white p-8 shadow-sm shadow-indigo-100"
@@ -65,7 +64,8 @@ export default function CreateAppuntiPage() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Es. Derivate e integrali"
               className="w-full rounded-lg border border-indigo-200 bg-indigo-50/40 px-3 py-2 text-indigo-900 placeholder:text-indigo-300 outline-none transition-colors focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100"
-              autoFocus />
+              autoFocus
+            />
           </div>
 
           <div>
@@ -97,18 +97,29 @@ export default function CreateAppuntiPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Descrizione opzionale..."
               rows={3}
-              className="w-full resize-none rounded-lg border border-indigo-200 bg-indigo-50/40 px-3 py-2 text-indigo-900 placeholder:text-indigo-300 outline-none transition-colors focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100" />
+              className="w-full resize-none rounded-lg border border-indigo-200 bg-indigo-50/40 px-3 py-2 text-indigo-900 placeholder:text-indigo-300 outline-none transition-colors focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+            />
           </div>
 
-          <button
-            type="submit"
-            disabled={!name.trim() || !course.trim()}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-200 disabled:text-indigo-400"
-          >
-            Crea appunto
-          </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+            >
+              Annulla
+            </button>
+
+            <button
+              type="submit"
+              disabled={!name.trim() || !course.trim()}
+              className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-200 disabled:text-indigo-400"
+            >
+              Crea appunto
+            </button>
+          </div>
         </form>
-      </div></>
-    
+      </div>
+    </>
   );
 }

@@ -13,7 +13,7 @@ export default function GrideBase() {
     min-h-0
     w-full
     grid-cols-4
-    grid-rows-[160px_minmax(0,1fr)_minmax(0,1fr)]
+    grid-rows-[100px_minmax(0,1fr)_minmax(0,1fr)]
     gap-4
     overflow-hidden
     p-4

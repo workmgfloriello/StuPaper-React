@@ -2,7 +2,7 @@ import { ipcMain, dialog, BrowserWindow } from "electron";
 import fs from "fs";
 import path from "path";
 
-import { insertNotes } from "../../database/ManageDatabase.ts";
+import { insertNotes, selectNotes } from "../../database/ManageDatabase.ts";
 
 import type { File } from "../../src/interface/interface.ts";
 
@@ -48,13 +48,12 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
     const filePath = path.join(dirPath, `${file.name}.json`);
 
     if (!fs.existsSync(filePath)) {
-
       //salvo ref nel db
       const note = insertNotes({
         id: file.id,
         course: file.course,
         name: file.name,
-        data: new Date(file.createAt),
+        data: new Date(file.created_at),
       });
 
       fs.writeFileSync(
@@ -64,7 +63,8 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
             metadata: {
               id: file.id,
               name: file.name,
-              createAt: file.createAt.toISOString(),
+              createAt: file.created_at.toISOString(),
+              course:file.course,
             },
             type: "doc",
             content: [],
@@ -72,24 +72,28 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
           null,
           2,
         ),
-      ); 
+      );
       return note;
     }
-   
   });
 
   //Aprire File
-  ipcMain.handle("file:open", async () => {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      properties: ["openFile"],
-      filters: [{ name: "File di testo", extensions: ["json"] }],
-    });
+  ipcMain.handle("file:open", async (_event, fileName: string) => {
+    if (fileName === "") {
+      const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ["openFile"],
+        filters: [{ name: "File di testo", extensions: ["json"] }],
+      });
 
-    if (canceled || filePaths.length === 0) {
-      return null;
-    } else {
-      //Leggi contenuto file
-      const content = fs.readFileSync(filePaths[0], "utf-8");
+      if (canceled || filePaths.length === 0) {
+        return null;
+      } else {
+        //Leggi contenuto file
+        const content = fs.readFileSync(filePaths[0], "utf-8");
+        return content;
+      }
+    }else{
+      const content = fs.readFileSync(`${dirPath}/${fileName}.json`,"utf-8");
       return content;
     }
   });
@@ -126,4 +130,9 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
       };
     }
   });
+
+  //selezione file REF dal db
+  ipcMain.handle("file:select",async () =>{
+    return selectNotes();
+  })
 }

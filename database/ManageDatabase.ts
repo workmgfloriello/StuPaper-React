@@ -57,11 +57,11 @@ function initializeDatabase(database: DatabaseSync) {
 
     CREATE TABLE IF NOT EXISTS notes (
       id TEXT PRIMARY KEY,
-      course_id TEXT NOT NULL,
+      course TEXT NOT NULL,
       name TEXT NOT NULL,
       created_at TEXT NOT NULL,
 
-      FOREIGN KEY (course_id)
+      FOREIGN KEY (course)
         REFERENCES courses(id)
         ON DELETE CASCADE
     );
@@ -136,7 +136,7 @@ export function insertNotes(note: Note){
   const stmt = database.prepare(`
     INSERT INTO notes (
       id,
-      course_id,
+      course,
       name,
       created_at
     )

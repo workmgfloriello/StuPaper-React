@@ -32,7 +32,9 @@ import SaveBar from "./components/SaveBar";
 import CustomShortCut from "./extension/CustomShortcut";
 import MathPanel from "./components/MathPanel";
 import CustomBlockquote from "./extension/CustomBlockquote";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useParams } from "react-router-dom";
+import FileManager from "./extension/FileManager";
 
 const lowlight = createLowlight({
   javascript,
@@ -152,6 +154,7 @@ export default function Editor({
   });
 
   const [showMathPanel, setShowMathPanel] = useState(false);
+  const { fileName } = useParams();
 
   const handleMathInsert = (latex: string) => {
     editor
@@ -176,6 +179,13 @@ export default function Editor({
     setShowMathPanel(false);
     editor?.chain().focus().run();
   };
+
+  useEffect(() => {
+    if (!editor) return;
+
+    FileManager.setEditor(editor);
+    FileManager.openFile(fileName);
+  }, [editor, fileName]);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-gray-200">

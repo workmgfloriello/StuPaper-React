@@ -1,11 +1,11 @@
 "use client";
 import { useCourses } from "@/lib/context/CoursesContext";
-import { useNotes } from "@/lib/context/NotesContext.tsx";
+import { useFiles } from "@/lib/context/NotesContext.tsx";
 import { Circle, NotebookPen } from "lucide-react";
 
 export default function notes() {
   const { courses } = useCourses();
-  const {notes} = useNotes();
+  const { files } = useFiles();
   return (
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white">
       {/* Header */}
@@ -17,7 +17,7 @@ export default function notes() {
 
       {/* Lista scrollabile */}
       <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto divide-y divide-gray-100">
-        {notes.map((note) => {
+        {files.map((note) => {
           const findColor = courses.find((course) => note.course == course.id);
           let color = "";
 
@@ -50,9 +50,11 @@ export default function notes() {
                 {note.course}
               </span>
 
-              <p className="w-24 text-right text-xs text-gray-400">
-                {note.data.toLocaleDateString("it-IT")}
-              </p>
+              <span>
+                {note.created_at
+                  ? new Date(note.created_at).toLocaleDateString("it-IT")
+                  : "Nessuna data"}
+              </span>
             </div>
           );
         })}

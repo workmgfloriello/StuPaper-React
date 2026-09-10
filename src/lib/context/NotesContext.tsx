@@ -5,29 +5,53 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
-import { initialNotes } from "../data";
+import { File } from "@/interface/interface";
 
-type NotesContextType = {
-  notes: typeof initialNotes;
-  setNotes: Dispatch<SetStateAction<typeof initialNotes>>;
+type FilesContextType = {
+  files: File[];
+  setFiles: Dispatch<SetStateAction<File[]>>;
 };
 
-const NotesContext = createContext<NotesContextType | null>(null);
+const FilesContext = createContext<FilesContextType | null>(null);
 
-export function NotesProvider({ children }: { children: ReactNode }) {
-  const [notes, setNotes] = useState(initialNotes);
+export function FilesProvider({ children }: { children: ReactNode }) {
+  const [files, setFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    async function loadFiles() {
+      try {
+        const electronAPI = window.electronAPI as
+          | (typeof window.electronAPI & {
+              selectFile?: () => Promise<File[]>;
+            })
+          | undefined;
+
+        if (!electronAPI?.selectFile) {
+          return;
+        }
+
+        const loadedFiles = await electronAPI.selectFile();
+        setFiles(loadedFiles);
+      } catch (error) {
+        console.error("Errore caricamento File:", error);
+      }
+    }
+
+    loadFiles();
+  }, []);
 
   return (
-    <NotesContext.Provider value={{ notes, setNotes }}>
+    <FilesContext.Provider value={{ files, setFiles }}>
       {children}
-    </NotesContext.Provider>
+    </FilesContext.Provider>
   );
 }
 
-export function useNotes() {
-  const context = useContext(NotesContext);
+export function useFiles() {
+  const context = useContext(FilesContext);
 
   if (!context) {
     throw new Error("useCourses must be used within a CoursesProvider");

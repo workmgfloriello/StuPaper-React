@@ -31,10 +31,8 @@ export default function FrameTopbar() {
         shrink-0
         items-center
         justify-between
-        border-b
-        border-gray-200
-        bg-white
-        text-gray-700
+        bg-indigo-950
+        text-gray-100
         select-none
       "
     >
@@ -45,8 +43,8 @@ export default function FrameTopbar() {
       >
         {/* Logo / Titolo */}
         <div className="flex items-center pl-3">
-          <span className="text-xs font-medium tracking-wide text-indigo-700">
-            StuPaper
+          <span className="text-xl tracking-wide font-bold text-gray-100">
+            SlashPaper
           </span>
         </div>
 
@@ -66,10 +64,10 @@ export default function FrameTopbar() {
               w-11
               items-center
               justify-center
-              text-gray-600
+               text-gray-100
               transition-colors
               duration-150
-              hover:bg-gray-100
+              hover:bg-gray-300
               hover:text-gray-700
             "
           >
@@ -87,10 +85,10 @@ export default function FrameTopbar() {
               w-11
               items-center
               justify-center
-              text-gray-600
+               text-gray-100
               transition-colors
               duration-150
-              hover:bg-gray-100
+              hover:bg-gray-300
               hover:text-gray-700
             "
           >
@@ -108,7 +106,7 @@ export default function FrameTopbar() {
               w-11
               items-center
               justify-center
-              text-gray-600
+               text-gray-100
               transition-colors
               duration-150
               hover:bg-red-500

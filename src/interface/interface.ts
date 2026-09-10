@@ -30,5 +30,5 @@ export type File = {
   directory:string,
   course:string,
   description?:string,
-  createAt: Date,
+  created_at: Date,
 }

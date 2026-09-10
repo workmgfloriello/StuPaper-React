@@ -3,7 +3,7 @@ import Editor from "../editor/Editor";
 
 export default function EditorPage() {
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden">
       <Sidebar />
 
       <main className="min-w-0 flex-1 overflow-y-auto">

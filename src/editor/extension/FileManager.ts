@@ -21,7 +21,7 @@ interface OpenFilePickerOptions {
 interface ElectronApi {
   createFile?: (file: File) => any;
   exportPDF?: () => void | Promise<void>;
-  openFile?: () => any;
+  openFile?: (fileName: string) => any;
   saveFile?: (data: any, name: any) => any;
 }
 
@@ -50,7 +50,7 @@ class CustomFileManager {
    return create;
   }
 
-  async openFile() {
+  async openFile(fileName: string = "") {
     if (!this.editor) {
       console.error("Editor non impostato");
       return;
@@ -62,7 +62,7 @@ class CustomFileManager {
       return;
     }
 
-    const file = await openFile();
+    const file = await openFile(fileName);
     const jsonFile = JSON.parse(file);
     this.editor.commands.setContent(jsonFile);
 

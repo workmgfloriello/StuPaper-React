@@ -30,7 +30,7 @@ function createWindow() {
 
   Menu.setApplicationMenu(null);
 
-  //win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   if (isDev) {
     win.loadURL("http://localhost:3000");

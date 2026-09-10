@@ -12,9 +12,7 @@ interface SaveBarProps {
 export default function SaveBar({ editor }: SaveBarProps) {
   const [open, setOpen] = useState(false);
   const componentRef = useRef<HTMLDivElement>(null);
-
-  FileManager.setEditor(editor as Editor);
-
+  
   //click fuori chiudo menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
