@@ -4,6 +4,7 @@ import { useCourses } from "@/lib/context/CoursesContext";
 import { generateUUID } from "@/lib/utils/uuid";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateAppuntiPage() {
   const [name, setName] = useState("");
@@ -11,7 +12,7 @@ export default function CreateAppuntiPage() {
   const [description, setDescription] = useState("");
 
   const { courses } = useCourses();
-
+const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -28,7 +29,9 @@ export default function CreateAppuntiPage() {
     };
 
     const create = await FileManager.createFile(newFile);
-    console.log(create);
+    if (create) {
+  navigate(`/editor/${encodeURIComponent(newFile.name)}`);
+}
   };
 
   return (

@@ -69,22 +69,14 @@ function ToolbarButton({
   children: React.ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-indigo-700 transition-colors
-        hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-40
-        ${active ? "bg-indigo-600 text-white hover:bg-indigo-600" : ""}`}
-    >
+    <button type="button" onClick={onClick} disabled={disabled} title={title} className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-indigo-700 transition-colors hover:bg-indigo-100 hover:text-indigo-800 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#4daafc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#75beff] ${active ? "bg-indigo-100 text-indigo-700 dark:bg-[#264f78] dark:text-[#4daafc] dark:hover:bg-[#264f78]" : ""}`}>
       {children}
     </button>
   );
 }
 
 function Divider() {
-  return <div className="mx-1 h-6 w-px bg-indigo-200" />;
+  return <div className="mx-1 h-6 w-px bg-indigo-200 dark:bg-[#3c3c3c]" />;
 }
 
 const DEFAULT_TEXT_COLOR = "#1e1b4b"; // indigo-950, usato se non è ancora stato scelto nessun colore
@@ -116,64 +108,56 @@ function ColorPicker({ editor }: { editor: Editor }) {
     setIsOpen(false);
   };
 
-  return (
-    <div ref={containerRef} className="relative flex items-center">
-      {/* Bottone principale: applica l'ultimo colore selezionato (o quello di default) */}
-      <button
-        type="button"
-        title="Colore testo"
-        onClick={() => applyColor(currentColor)}
-        className="flex h-8 flex-col items-center justify-center rounded-l-md px-1.5 text-indigo-700 hover:bg-indigo-100"
-      >
-        <Palette size={16} />
-        <span
-          className="mt-0.5 h-1 w-4 rounded-sm"
-          style={{ backgroundColor: currentColor }}
-        />
-      </button>
+ return (
+  <div ref={containerRef} className="relative flex items-center">
+    {/* Bottone principale: applica l'ultimo colore selezionato (o quello di default) */}
+    <button
+      type="button"
+      title="Colore testo"
+      onClick={() => applyColor(currentColor)}
+      className="flex h-8 flex-col items-center justify-center rounded-l-md px-1.5 text-indigo-700 transition hover:bg-indigo-100 dark:text-[#4daafc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#75beff]"
+    >
+      <Palette size={16} />
+      <span className="mt-0.5 h-1 w-4 rounded-sm" style={{ backgroundColor: currentColor }} />
+    </button>
 
-      {/* Freccina: apre/chiude la tendina dei colori */}
-      <button
-        type="button"
-        title="Scegli colore"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex h-8 w-5 items-center justify-center rounded-r-md text-indigo-700 hover:bg-indigo-100 ${
-          isOpen ? "bg-indigo-100" : ""
-        }`}
-      >
-        <ChevronDown size={12} />
-      </button>
+    {/* Freccina: apre/chiude la tendina dei colori */}
+    <button
+      type="button"
+      title="Scegli colore"
+      onClick={() => setIsOpen((prev) => !prev)}
+      className={`flex h-8 w-5 items-center justify-center rounded-r-md text-indigo-700 transition hover:bg-indigo-100 dark:text-[#4daafc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#75beff] ${isOpen ? "bg-indigo-100 dark:bg-[#264f78] dark:text-[#4daafc]" : ""}`}
+    >
+      <ChevronDown size={12} />
+    </button>
 
-      {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-1 grid w-max grid-cols-4 gap-1 rounded-lg border border-indigo-200 bg-white p-2 shadow-lg">
-          {TEXT_COLORS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              className={`h-5 w-5 rounded-full border ${
-                currentColor === color
-                  ? "ring-2 ring-indigo-500 ring-offset-1"
-                  : "border-indigo-100"
-              }`}
-              style={{ backgroundColor: color }}
-              onClick={() => applyColor(color)}
-              title={color}
-            />
-          ))}
+    {isOpen && (
+      <div className="absolute left-0 top-full z-50 mt-1 grid w-max grid-cols-4 gap-1 rounded-lg border border-indigo-200 bg-white p-2 shadow-lg dark:border-[#3c3c3c] dark:bg-[#252526] dark:shadow-xl">
+        {TEXT_COLORS.map((color) => (
           <button
+            key={color}
             type="button"
-            className="col-span-4 mt-1 rounded-md bg-indigo-50 py-1 text-xs text-indigo-700 hover:bg-indigo-100"
-            onClick={() => {
-              editor.chain().focus().unsetColor().run();
-              setIsOpen(false);
-            }}
-          >
-            Rimuovi colore
-          </button>
-        </div>
-      )}
-    </div>
-  );
+            className={`h-5 w-5 rounded-full border ${currentColor === color ? "ring-2 ring-indigo-500 ring-offset-1 dark:ring-[#4daafc] dark:ring-offset-[#252526]" : "border-indigo-100 dark:border-[#3c3c3c]"}`}
+            style={{ backgroundColor: color }}
+            onClick={() => applyColor(color)}
+            title={color}
+          />
+        ))}
+
+        <button
+          type="button"
+          className="col-span-4 mt-1 rounded-md bg-indigo-50 py-1 text-xs text-indigo-700 transition hover:bg-indigo-100 dark:bg-[#1e1e1e] dark:text-[#4daafc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#75beff]"
+          onClick={() => {
+            editor.chain().focus().unsetColor().run();
+            setIsOpen(false);
+          }}
+        >
+          Rimuovi colore
+        </button>
+      </div>
+    )}
+  </div>
+);
 }
 
 interface TableMenuItem {
@@ -260,40 +244,36 @@ function TableMenu({ editor }: { editor: Editor }) {
     },
   ];
 
- return (
-    <div ref={containerRef} className="relative flex items-center">
-      <button
-        type="button"
-        title="Tabella"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex h-8 items-center gap-1 rounded-md px-2 text-sm text-indigo-700 hover:bg-indigo-100 ${
-          isOpen ? "bg-indigo-100" : ""
-        }`}
-      >
-        <Table2 size={16} />
-        <span className="hidden sm:inline">Tabella</span>
-        <ChevronDown size={12} />
-      </button>
+return (
+  <div ref={containerRef} className="relative flex items-center">
+    <button
+      type="button"
+      title="Tabella"
+      onClick={() => setIsOpen((prev) => !prev)}
+      className={`flex h-8 items-center gap-1 rounded-md px-2 text-sm text-indigo-700 transition hover:bg-indigo-100 dark:text-[#4daafc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#75beff] ${isOpen ? "bg-indigo-100 dark:bg-[#264f78] dark:text-[#4daafc]" : ""}`}
+    >
+      <Table2 size={16} />
+      <span className="hidden sm:inline">Tabella</span>
+      <ChevronDown size={12} />
+    </button>
 
-      {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-lg border border-indigo-200 bg-white p-1 shadow-lg">
-          {items.map((item, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={item.onClick}
-              className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-indigo-100 ${
-                item.danger ? "text-red-600 hover:bg-red-50" : "text-indigo-800"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+    {isOpen && (
+      <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-lg border border-indigo-200 bg-white p-1 shadow-lg dark:border-[#3c3c3c] dark:bg-[#252526] dark:shadow-xl">
+        {items.map((item, index) => (
+          <button
+            key={index}
+            type="button"
+            onClick={item.onClick}
+            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition ${item.danger ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-[#3a2020]" : "text-indigo-800 hover:bg-indigo-100 dark:text-[#cccccc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#4daafc]"}`}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+);
 }
 
 export default function TopBar({ editor, onMathClick }: TopBarProps) {
