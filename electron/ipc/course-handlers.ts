@@ -1,7 +1,7 @@
 import { ipcMain } from "electron";
 import { insertCourse, selectCourses } from "../../database/ManageDatabase.ts";
 
-export function registerDatabaseHandlers() {
+export function registerCourseHandlers() {
   //Insert al DB
   ipcMain.handle("courses:insert", (_, course) => {
     return insertCourse(course);

@@ -3,7 +3,7 @@ import path from "node:path";
 import fs from "node:fs";
 import { app } from "electron";
 
-import type { Course } from "../src/interface/interface.ts";
+import type { Course, Note } from "../src/interface/interface.ts";
 
 let db: DatabaseSync | null = null;
 
@@ -54,7 +54,8 @@ function initializeDatabase(database: DatabaseSync) {
       year INTEGER
     );
 
-    CREATE TABLE IF NOT EXISTS subjects (
+
+    CREATE TABLE IF NOT EXISTS notes (
       id TEXT PRIMARY KEY,
       course_id TEXT NOT NULL,
       name TEXT NOT NULL,
@@ -63,24 +64,6 @@ function initializeDatabase(database: DatabaseSync) {
       FOREIGN KEY (course_id)
         REFERENCES courses(id)
         ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS notes (
-      id TEXT PRIMARY KEY,
-      course_id TEXT NOT NULL,
-      subject_id TEXT,
-      title TEXT NOT NULL,
-      content TEXT,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL,
-
-      FOREIGN KEY (course_id)
-        REFERENCES courses(id)
-        ON DELETE CASCADE,
-
-      FOREIGN KEY (subject_id)
-        REFERENCES subjects(id)
-        ON DELETE SET NULL
     );
 
     CREATE TABLE IF NOT EXISTS settings (
@@ -147,6 +130,30 @@ export function selectCourses() {
  * =========================
  */
 
+export function insertNotes(note: Note){
+   const database = getDatabase();
+
+  const stmt = database.prepare(`
+    INSERT INTO notes (
+      id,
+      course_id,
+      name,
+      created_at
+    )
+    VALUES (?, ?, ?, ?)
+  `);
+
+  stmt.run(
+    note.id,
+    note.course,
+    note.name,
+    note.data.toISOString()
+  ); 
+
+  return note;
+
+}
+
 export function selectNotes() {
   const database = getDatabase();
 
@@ -154,4 +161,6 @@ export function selectNotes() {
     .prepare("SELECT * FROM notes")
     .all();
 }
+
+
 

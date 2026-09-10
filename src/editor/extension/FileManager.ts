@@ -1,6 +1,7 @@
 import { File } from "@/interface/interface";
 import { Editor } from "@tiptap/react";
 
+
 interface SaveFilePickerOptions {
   suggestedName?: string;
   types?: Array<{
@@ -18,9 +19,10 @@ interface OpenFilePickerOptions {
 }
 
 interface ElectronApi {
+  createFile?: (file: File) => any;
   exportPDF?: () => void | Promise<void>;
   openFile?: () => any;
-  saveFile? : (data: any, name: any)=> any;
+  saveFile?: (data: any, name: any) => any;
 }
 
 declare global {
@@ -37,10 +39,15 @@ declare global {
 
 class CustomFileManager {
   private editor: Editor | null = null;
-  private fileData: { name: string; data: any; } | undefined;
+  private fileData: { name: string; data: any } | undefined;
 
   setEditor(editor: Editor) {
     this.editor = editor;
+  }
+
+  async createFile(file: File) {
+   const create = window.electronAPI?.createFile?.(file);
+   return create;
   }
 
   async openFile() {
@@ -56,11 +63,11 @@ class CustomFileManager {
     }
 
     const file = await openFile();
-    const jsonFile = JSON.parse(file)
+    const jsonFile = JSON.parse(file);
     this.editor.commands.setContent(jsonFile);
 
     //salvo info importanti per salvare file dopo
-    this.setFileData(jsonFile.metadata.name,jsonFile); 
+    this.setFileData(jsonFile.metadata.name, jsonFile);
   }
 
   async saveFile() {
@@ -70,8 +77,8 @@ class CustomFileManager {
     }
 
     const saveFile = window.electronAPI?.saveFile;
-    if(!saveFile){
-       console.error("Salvataggio file non disponibile");
+    if (!saveFile) {
+      console.error("Salvataggio file non disponibile");
       return;
     }
 
@@ -80,7 +87,7 @@ class CustomFileManager {
     if (!fileData) return;
     const { name, data } = fileData;
 
-    const save = await saveFile(content,name);
+    const save = await saveFile(content, name);
     console.log(save);
   }
 
@@ -95,19 +102,19 @@ class CustomFileManager {
 
   getFileData() {
     return this.fileData;
-  } 
+  }
 
-  private setFileData(name: string, data:any) {
+  private setFileData(name: string, data: any) {
     this.fileData = { name, data };
   }
 
-  private getEditorContentJSON(){
-    if(!this.editor) return;
+  private getEditorContentJSON() {
+    if (!this.editor) return;
     return this.editor.getJSON().content;
   }
 
-  closeFile(){
-    this.fileData = undefined
+  closeFile() {
+    this.fileData = undefined;
   }
 }
 

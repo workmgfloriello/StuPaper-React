@@ -50,63 +50,58 @@ export default function Sidebar() {
   }, [pathname]);
 
   return (
-    <aside
-      className={`
-        relative
-        flex
-        h-screen
-        shrink-0
-        flex-col
-        overflow-hidden
-        border-r
-        border-gray-200
-        bg-white
-        transition-all
-        duration-300
-        ${open ? "w-64" : "w-16"}
-
-      `}
-    >
-      {/* Toggle */}
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="
-          absolute
-          right-2
-          top-6
-          z-10
+<aside
+  className={`
+    relative
+    flex
+    h-full
+    min-h-0
+    shrink-0
+    flex-col
+    overflow-hidden
+    border-r
+    border-gray-200
+    bg-white
+    transition-[width]
+    duration-300
+    ease-in-out
+    ${open ? "w-64" : "w-16"}
+  `}
+>
+      {/* Logo */}
+      <div className="flex h-18 shrink-0 items-center gap-2 px-4">
+        {/* Toggle */}
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="
           flex
-          h-6
-          w-6
+          h-8
+          w-8
+          shrink-0
           items-center
           justify-center
           rounded-full
           border
-          border-gray-200
-          bg-white
-          text-gray-500
+          border-indigo-900
+          bg-indigo-600
+          text-white
           shadow-sm
           transition
-          hover:bg-gray-50
+          hover:bg-white
+          hover:text-indigo-600
         "
-      >
-        <ChevronLeft
-          className={`
+        >
+          <ChevronLeft
+            className={`
             h-4
             w-4
             transition-transform
             duration-300
             ${open ? "" : "rotate-180"}
           `}
-        />
-      </button>
-
-      {/* Logo */}
-      <div className="flex h-18 shrink-0 items-center gap-2 px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white">
-          S
-        </div>
+          />
+        </button>
 
         {open && (
           <span className="whitespace-nowrap text-base font-semibold text-gray-900">

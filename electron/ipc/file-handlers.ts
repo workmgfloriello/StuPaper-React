@@ -2,6 +2,8 @@ import { ipcMain, dialog, BrowserWindow } from "electron";
 import fs from "fs";
 import path from "path";
 
+import { insertNotes } from "../../database/ManageDatabase.ts";
+
 import type { File } from "../../src/interface/interface.ts";
 
 export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
@@ -46,6 +48,15 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
     const filePath = path.join(dirPath, `${file.name}.json`);
 
     if (!fs.existsSync(filePath)) {
+
+      //salvo ref nel db
+      const note = insertNotes({
+        id: file.id,
+        course: file.course,
+        name: file.name,
+        data: new Date(file.createAt),
+      });
+
       fs.writeFileSync(
         filePath,
         JSON.stringify(
@@ -61,8 +72,10 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
           null,
           2,
         ),
-      );
+      ); 
+      return note;
     }
+   
   });
 
   //Aprire File
@@ -113,5 +126,4 @@ export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
       };
     }
   });
-
 }

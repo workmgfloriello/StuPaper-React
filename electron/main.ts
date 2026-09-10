@@ -11,13 +11,16 @@ const __dirname = path.dirname(__filename);
 const isDev = !app.isPackaged;
 
 let win: BrowserWindow;
+let logoPath = path.join(__dirname,'../public/assets/logo.ico');
 
 
 function createWindow() {
   win = new BrowserWindow({
     width: 1400,
     height: 900,
-
+    frame:false,
+    icon: logoPath,
+    title:"StuPaper",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -27,7 +30,7 @@ function createWindow() {
 
   Menu.setApplicationMenu(null);
 
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
 
   if (isDev) {
     win.loadURL("http://localhost:3000");
@@ -35,7 +38,6 @@ function createWindow() {
     win.loadFile(path.join(__dirname, "../out/index.html"));
   }
 }
-
 app.whenReady().then(() => {
   createWindow();
   getDatabase();

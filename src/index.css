@@ -2,7 +2,6 @@
 @import "katex/dist/katex.min.css";
 @import "highlight.js/styles/atom-one-dark.css";
 
-
 @media print {
   /* Nasconde tutta l'interfaccia */
   body * {

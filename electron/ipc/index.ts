@@ -1,8 +1,10 @@
 import { BrowserWindow } from "electron";
-import { registerDatabaseHandlers } from "./database-handlers.ts";
+import { registerCourseHandlers } from "./course-handlers.ts";
 import { registerFileHandlers } from "./file-handlers.ts";
+import { registerWindowHandlers } from "./window-handlers.ts";
 
-export function registerIpcHandlers(win: BrowserWindow, dirPath:string) {
-  registerDatabaseHandlers()
-  registerFileHandlers(win, dirPath)
+export function registerIpcHandlers(win: BrowserWindow, dirPath: string) {
+  registerWindowHandlers(win);
+  registerCourseHandlers();
+  registerFileHandlers(win, dirPath);
 }

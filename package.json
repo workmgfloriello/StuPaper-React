@@ -79,7 +79,14 @@
       "package.json"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "public/assets/logo.png"
+    },
+    "mac": {
+      "icon": "public/assets/logo.png"
+    },
+    "linux": {
+      "icon": "public/assets/logo.png"
     }
   }
 }

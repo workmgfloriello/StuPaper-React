@@ -178,7 +178,7 @@ export default function Editor({
   };
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden bg-gray-200">
+    <div className="flex h-full w-full flex-col overflow-hidden bg-gray-200">
       {/* TOOLBAR */}
       <div className="mt-2 flex flex-col items-center relative z-50">
         <div className="flex items-center justify-center gap-5 align-middle">
@@ -201,7 +201,7 @@ export default function Editor({
       </div>
 
       {/* EDITOR */}
-      <div className="mx-auto mt-5 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white h-auto relative z-10">
+      <div className="relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white">
         <EditorContent editor={editor} />
       </div>
 

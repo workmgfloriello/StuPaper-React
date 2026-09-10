@@ -9,18 +9,14 @@ export default function GrideBase() {
     <div
       className="
     grid
-    min-h-screen
+    h-full
+    min-h-0
     w-full
-    grid-cols-1
-    grid-rows-[160px_400px_300px_450px_450px]
+    grid-cols-4
+    grid-rows-[160px_minmax(0,1fr)_minmax(0,1fr)]
     gap-4
-    overflow-y-auto
+    overflow-hidden
     p-4
-
-    lg:h-screen
-    lg:grid-cols-4
-    lg:grid-rows-[0.3fr_1fr_1fr]
-    lg:overflow-hidden
   "
     >
       {/* Welcome */}
@@ -37,10 +33,12 @@ export default function GrideBase() {
       <div className="min-h-0 min-w-0 lg:col-span-1">
         <Deadlines />
       </div>
+
       {/* Calendario */}
       <div className="min-h-0 min-w-0 lg:col-span-1">
         <CalendarDashboard />
       </div>
+
       {/* Corsi recenti */}
       <div className="min-h-0 min-w-0 lg:col-span-3">
         <RecentCourses />

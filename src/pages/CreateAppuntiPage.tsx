@@ -1,5 +1,7 @@
+import FileManager from "@/editor/extension/FileManager";
 import { File } from "@/interface/interface";
 import { useCourses } from "@/lib/context/CoursesContext";
+import { generateUUID } from "@/lib/utils/uuid";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
@@ -10,7 +12,7 @@ export default function CreateAppuntiPage() {
 
   const { courses } = useCourses();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name.trim() || !course.trim()) {
@@ -18,18 +20,15 @@ export default function CreateAppuntiPage() {
     }
 
     const newFile: File = {
-      id: "test10",
+      id: generateUUID(),
       name: name,
       directory: description,
       course: course,
       createAt: new Date(),
     };
 
-    const electronAPI = window.electronAPI as
-      | { createFile?: (file: File) => void }
-      | undefined;
-
-    electronAPI?.createFile?.(newFile);
+   const create =  await FileManager.createFile(newFile);
+   console.log(create)
   };
 
   return (
