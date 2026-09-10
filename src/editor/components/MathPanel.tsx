@@ -226,115 +226,84 @@ export default function MathPanel({ onInsert, onClose }: MathPanelProps) {
   const currentButtons =
     mathCategories.find((c) => c.title === activeCategory)?.buttons ?? [];
 
-  return (
+return (
+  <>
+    <style>{`
+      math-field::part(virtual-keyboard-toggle) {
+        display: none !important;
+      }
+    `}</style>
 
-      <><style>{`
-        math-field::part(virtual-keyboard-toggle) {
-          display: none !important;
-        }
-      `}</style><div className="flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-indigo-100 bg-white p-2.5 shadow-sm">
-              {/* RIGA 1: chiudi + categorie */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                  <button
-                      type="button"
-                      onClick={onClose}
-                      title="Chiudi formule (Esc)"
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-                  >
-                      ×
-                  </button>
+    <div className="flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-indigo-100 bg-white p-2.5 shadow-sm dark:border-[#303030] dark:bg-[#252526] dark:shadow-none">
+      {/* RIGA 1: chiudi + categorie */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <button type="button" onClick={onClose} title="Chiudi formule (Esc)" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 dark:text-[#9d9d9d] dark:hover:bg-[#2a2d2e] dark:hover:text-[#cccccc]">
+          ×
+        </button>
 
-                  <div className="h-5 w-px shrink-0 bg-gray-200" />
+        <div className="h-5 w-px shrink-0 bg-gray-200 dark:bg-[#3c3c3c]" />
 
-                  {mathCategories.map((category) => (
-                      <button
-                          key={category.title}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                              setActiveCategory(category.title);
-                              requestAnimationFrame(() => {
-                                  mfRef.current?.focus();
-                              });
-                          } }
-                          className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-medium transition ${activeCategory === category.title
-                                  ? "bg-indigo-600 text-white shadow-sm"
-                                  : "bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700"}`}
-                      >
-                          {category.title}
-                      </button>
-                  ))}
-              </div>
+        {mathCategories.map((category) => (
+          <button key={category.title} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setActiveCategory(category.title); requestAnimationFrame(() => { mfRef.current?.focus(); }); }} className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-medium transition ${activeCategory === category.title ? "bg-indigo-600 text-white shadow-sm dark:bg-[#007acc]" : "bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-[#2a2d2e] dark:text-[#9d9d9d] dark:hover:bg-[#303030] dark:hover:text-[#cccccc]"}`}>
+            {category.title}
+          </button>
+        ))}
+      </div>
 
-              {/* RIGA 2: simboli della categoria attiva */}
-              <div className="flex flex-wrap gap-1.5 rounded-lg bg-gray-50 p-2">
-                  {currentButtons.map((button) => (
-                      <button
-                          key={`${activeCategory}-${button.label}`}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()} // non ruba il focus dal campo math
-                          onClick={() => insertSymbol(button.value)}
-                          title={button.value}
-                          className="flex h-8 min-w-8 items-center justify-center rounded-md border border-gray-200 bg-white px-1.5 text-sm font-medium text-gray-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95"
-                      >
-                          {button.label}
-                      </button>
-                  ))}
-              </div>
+      {/* RIGA 2: simboli della categoria attiva */}
+      <div className="flex flex-wrap gap-1.5 rounded-lg bg-gray-50 p-2 dark:bg-[#1e1e1e]">
+        {currentButtons.map((button) => (
+          <button key={`${activeCategory}-${button.label}`} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => insertSymbol(button.value)} title={button.value} className="flex h-8 min-w-8 items-center justify-center rounded-md border border-gray-200 bg-white px-1.5 text-sm font-medium text-gray-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 active:scale-95 dark:border-[#3c3c3c] dark:bg-[#252526] dark:text-[#cccccc] dark:hover:border-[#007acc] dark:hover:bg-[#2a2d2e] dark:hover:text-[#4daafc]">
+            {button.label}
+          </button>
+        ))}
+      </div>
 
-              {/* RIGA 3: editor visuale — qui la formula si vede già "vera",
-        niente più anteprima separata */}
-              <div className="min-h-12 rounded-lg border border-gray-300 bg-white px-3 py-2 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100">
-                  {ready ? (
-                      <math-field
-                            ref = {(el) => {
-                                mfRef.current = el;
-                            }}
-                          virtualKeyboardMode="off"
-                          onInput={(e: React.FormEvent<MathfieldElement>) => setLatex((e.currentTarget as MathfieldElement).value)}
-                          onKeyDown={(e: React.KeyboardEvent) => {
-                              if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  handleInsert();
-                              }
-                          } }
-                          style={{ display: "block", width: "100%", fontSize: "1.2rem", minHeight: "1.75rem" }} />
-                  ) : (
-                      <span className="text-xs text-gray-400">Caricamento editor formule…</span>
-                  )}
-              </div>
+      {/* RIGA 3: editor visuale */}
+      <div className="min-h-12 rounded-lg border border-gray-300 bg-white px-3 py-2 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 dark:border-[#3c3c3c] dark:bg-white dark:focus-within:border-[#007acc] dark:focus-within:ring-0">
+        {ready ? (
+          <math-field
+            ref={(el) => {
+              mfRef.current = el;
+            }}
+            virtualKeyboardMode="off"
+            onInput={(e: React.FormEvent<MathfieldElement>) => setLatex((e.currentTarget as MathfieldElement).value)}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleInsert();
+              }
+            }}
+            style={{ display: "block", width: "100%", fontSize: "1.2rem", minHeight: "1.75rem" }}
+          />
+        ) : (
+          <span className="text-xs text-gray-400 dark:text-[#6e6e6e]">
+            Caricamento editor formule…
+          </span>
+        )}
+      </div>
 
-              {/* RIGA 4: azioni */}
-              <div className="flex items-center justify-end gap-2">
-                  <button
-                      type="button"
-                      onClick={clearLatex}
-                      disabled={!latex}
-                      title="Cancella"
-                      className="shrink-0 rounded-md px-2 py-1.5 text-xs text-gray-400 transition hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                      Cancella
-                  </button>
+      {/* RIGA 4: azioni */}
+      <div className="flex items-center justify-end gap-2">
+        <button type="button" onClick={clearLatex} disabled={!latex} title="Cancella" className="shrink-0 rounded-md px-2 py-1.5 text-xs text-gray-400 transition hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#9d9d9d] dark:hover:text-red-400">
+          Cancella
+        </button>
 
-                  <button
-                      type="button"
-                      onClick={handleInsert}
-                      disabled={!latex.trim()}
-                      className="shrink-0 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                      Inserisci
-                  </button>
-              </div>
+        <button type="button" onClick={handleInsert} disabled={!latex.trim()} className="shrink-0 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#007acc] dark:hover:bg-[#1a85c7]">
+          Inserisci
+        </button>
+      </div>
 
-              {/* SUGGERIMENTI RAPIDI */}
-              <p className="px-0.5 text-[11px] text-gray-400">
-                  Scrivi <span className="font-mono">1/2</span> o <span className="font-mono">x^2</span>{" "}
-                  direttamente: diventano frazione/esponente veri, come a Word ·{" "}
-                  <kbd className="rounded border border-gray-200 bg-gray-50 px-1">Tab</kbd> campo successivo ·{" "}
-                  <kbd className="rounded border border-gray-200 bg-gray-50 px-1">↑↓←→</kbd> naviga ·{" "}
-                  <kbd className="rounded border border-gray-200 bg-gray-50 px-1">Invio</kbd> inserisce (resti qui) ·{" "}
-                  <kbd className="rounded border border-gray-200 bg-gray-50 px-1">Esc</kbd> chiudi
-              </p>
-          </div></>
-  );
+      {/* SUGGERIMENTI RAPIDI */}
+      <p className="px-0.5 text-[11px] text-gray-400 dark:text-[#6e6e6e]">
+        Scrivi <span className="font-mono">1/2</span> o <span className="font-mono">x^2</span>{" "}
+        direttamente: diventano frazione/esponente veri, come a Word ·{" "}
+        <kbd className="rounded border border-gray-200 bg-gray-50 px-1 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#9d9d9d]">Tab</kbd> campo successivo ·{" "}
+        <kbd className="rounded border border-gray-200 bg-gray-50 px-1 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#9d9d9d]">↑↓←→</kbd> naviga ·{" "}
+        <kbd className="rounded border border-gray-200 bg-gray-50 px-1 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#9d9d9d]">Invio</kbd> inserisce (resti qui) ·{" "}
+        <kbd className="rounded border border-gray-200 bg-gray-50 px-1 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#9d9d9d]">Esc</kbd> chiudi
+      </p>
+    </div>
+  </>
+);
 }

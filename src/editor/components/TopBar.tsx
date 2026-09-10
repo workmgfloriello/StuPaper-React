@@ -314,216 +314,217 @@ export default function TopBar({ editor, onMathClick }: TopBarProps) {
   }, [editor]);
 
   if (!editor) return null;
-  return (
-    <div className="flex flex-wrap items-center gap-1 rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-2">
-      {/* Undo / Redo */}
-      <ToolbarButton
-        onClick={() => editor.chain().focus().undo().run()}
-        disabled={!editor.can().undo()}
-        title="Annulla"
-      >
-        <Undo2 size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().redo().run()}
-        disabled={!editor.can().redo()}
-        title="Ripeti"
-      >
-        <Redo2 size={16} />
-      </ToolbarButton>
+ return (
+  <div className="flex flex-wrap items-center gap-1 rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-2 dark:border-[#303030] dark:bg-[#252526]">
+    {/* Undo / Redo */}
+    <ToolbarButton
+      onClick={() => editor.chain().focus().undo().run()}
+      disabled={!editor.can().undo()}
+      title="Annulla"
+    >
+      <Undo2 size={16} />
+    </ToolbarButton>
 
-      <Divider />
+    <ToolbarButton
+      onClick={() => editor.chain().focus().redo().run()}
+      disabled={!editor.can().redo()}
+      title="Ripeti"
+    >
+      <Redo2 size={16} />
+    </ToolbarButton>
 
-      {/* Font family */}
-      <div className="relative inline-flex items-center">
-        <Type
-          size={14}
-          className="pointer-events-none absolute left-2 text-indigo-500"
-        />
-        <select
-          className="h-8 cursor-pointer rounded-md border border-indigo-200 bg-white pl-7 pr-2 text-sm text-indigo-800 outline-none focus:border-indigo-500"
-          onChange={(e) =>
-            e.target.value
-              ? editor.chain().focus().setFontFamily(e.target.value).run()
-              : editor.chain().focus().unsetFontFamily().run()
-          }
-          value={(editor.getAttributes("textStyle").fontFamily as string) ?? ""}
-        >
-          {FONT_FAMILIES.map((f) => (
-            <option key={f.label} value={f.value}>
-              {f.label}
-            </option>
-          ))}
-        </select>
-      </div>
+    <Divider />
 
-      {/* Heading */}
+    {/* Font family */}
+    <div className="relative inline-flex items-center">
+      <Type size={14} className="pointer-events-none absolute left-2 text-indigo-500 dark:text-[#4daafc]" />
+
       <select
-        className="h-8 cursor-pointer rounded-md border border-indigo-200 bg-white px-2 text-sm text-indigo-800 outline-none focus:border-indigo-500"
-        value={
-          editor.isActive("heading", { level: 1 })
-            ? "1"
-            : editor.isActive("heading", { level: 2 })
-              ? "2"
-              : editor.isActive("heading", { level: 3 })
-                ? "3"
-                : "0"
+        className="h-8 cursor-pointer rounded-md border border-indigo-200 bg-white pl-7 pr-2 text-sm text-indigo-800 outline-none focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:focus:border-[#007acc]"
+        onChange={(e) =>
+          e.target.value
+            ? editor.chain().focus().setFontFamily(e.target.value).run()
+            : editor.chain().focus().unsetFontFamily().run()
         }
-        onChange={(e) => {
-          const level = Number(e.target.value);
-          if (level === 0) {
-            editor.chain().focus().setParagraph().run();
-          } else {
-            editor
-              .chain()
-              .focus()
-              .toggleHeading({ level: level as 1 | 2 | 3 })
-              .run();
-          }
-        }}
+        value={(editor.getAttributes("textStyle").fontFamily as string) ?? ""}
       >
-        <option value="0">Paragrafo</option>
-        <option value="1">Titolo 1</option>
-        <option value="2">Titolo 2</option>
-        <option value="3">Titolo 3</option>
+        {FONT_FAMILIES.map((f) => (
+          <option key={f.label} value={f.value}>
+            {f.label}
+          </option>
+        ))}
       </select>
-
-      <Divider />
-
-      {/* Basic marks */}
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        active={editor.isActive("bold")}
-        title="Grassetto"
-      >
-        <Bold size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        active={editor.isActive("italic")}
-        title="Corsivo"
-      >
-        <Italic size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        active={editor.isActive("underline")}
-        title="Sottolineato"
-      >
-        <UnderlineIcon size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        active={editor.isActive("strike")}
-        title="Barrato"
-      >
-        <Strikethrough size={16} />
-      </ToolbarButton>
-
-      <Divider />
-
-      {/* Color */}
-      <ColorPicker editor={editor} />
-
-      <ToolbarButton
-        onClick={() =>
-          editor.chain().focus().toggleHighlight({ color: "#fde68a" }).run()
-        }
-        active={editor.isActive("highlight")}
-        title="Evidenzia"
-      >
-        <Highlighter size={16} />
-      </ToolbarButton>
-
-      <Divider />
-
-      {/* Alignment */}
-      <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("left").run()}
-        active={editor.isActive({ textAlign: "left" })}
-        title="Allinea a sinistra"
-      >
-        <AlignLeft size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("center").run()}
-        active={editor.isActive({ textAlign: "center" })}
-        title="Allinea al centro"
-      >
-        <AlignCenter size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
-        active={editor.isActive({ textAlign: "right" })}
-        title="Allinea a destra"
-      >
-        <AlignRight size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-        active={editor.isActive({ textAlign: "justify" })}
-        title="Giustifica"
-      >
-        <AlignJustify size={16} />
-      </ToolbarButton>
-
-      <Divider />
-
-      {/* Lists & quote */}
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        active={editor.isActive("bulletList")}
-        title="Elenco puntato"
-      >
-        <List size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        active={editor.isActive("orderedList")}
-        title="Elenco numerato"
-      >
-        <ListOrdered size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        active={editor.isActive("blockquote")}
-        title="Citazione"
-      >
-        <Quote size={16} />
-      </ToolbarButton>
-
-      <Divider />
-
-      {/* Extra */}
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        title="Inserisci Blocco Codice"
-      >
-        <Code size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        title="Inserisci Regola Orizzontale"
-      >
-        <Minus size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton
-        onClick={() => editor.chain().focus().toggleTaskList().run()}
-        title="Inserisci To-Do List"
-      >
-        <ClipboardList size={16} />
-      </ToolbarButton>
-
-      <ToolbarButton onClick={onMathClick} title="Inserisci formula matematica">
-        <SquareFunction size={16} />
-      </ToolbarButton>
-
-      <Divider />
-
-      {/* Tabelle: menu a tendina */}
-      <TableMenu editor={editor} />
     </div>
-  );
+
+    {/* Heading */}
+    <select
+      className="h-8 cursor-pointer rounded-md border border-indigo-200 bg-white px-2 text-sm text-indigo-800 outline-none focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:focus:border-[#007acc]"
+      value={
+        editor.isActive("heading", { level: 1 })
+          ? "1"
+          : editor.isActive("heading", { level: 2 })
+            ? "2"
+            : editor.isActive("heading", { level: 3 })
+              ? "3"
+              : "0"
+      }
+      onChange={(e) => {
+        const level = Number(e.target.value);
+        if (level === 0) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 }).run();
+        }
+      }}
+    >
+      <option value="0">Paragrafo</option>
+      <option value="1">Titolo 1</option>
+      <option value="2">Titolo 2</option>
+      <option value="3">Titolo 3</option>
+    </select>
+
+    <Divider />
+
+    {/* Basic marks */}
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleBold().run()}
+      active={editor.isActive("bold")}
+      title="Grassetto"
+    >
+      <Bold size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleItalic().run()}
+      active={editor.isActive("italic")}
+      title="Corsivo"
+    >
+      <Italic size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleUnderline().run()}
+      active={editor.isActive("underline")}
+      title="Sottolineato"
+    >
+      <UnderlineIcon size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleStrike().run()}
+      active={editor.isActive("strike")}
+      title="Barrato"
+    >
+      <Strikethrough size={16} />
+    </ToolbarButton>
+
+    <Divider />
+
+    {/* Color */}
+    <ColorPicker editor={editor} />
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleHighlight({ color: "#fde68a" }).run()}
+      active={editor.isActive("highlight")}
+      title="Evidenzia"
+    >
+      <Highlighter size={16} />
+    </ToolbarButton>
+
+    <Divider />
+
+    {/* Alignment */}
+    <ToolbarButton
+      onClick={() => editor.chain().focus().setTextAlign("left").run()}
+      active={editor.isActive({ textAlign: "left" })}
+      title="Allinea a sinistra"
+    >
+      <AlignLeft size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().setTextAlign("center").run()}
+      active={editor.isActive({ textAlign: "center" })}
+      title="Allinea al centro"
+    >
+      <AlignCenter size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().setTextAlign("right").run()}
+      active={editor.isActive({ textAlign: "right" })}
+      title="Allinea a destra"
+    >
+      <AlignRight size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+      active={editor.isActive({ textAlign: "justify" })}
+      title="Giustifica"
+    >
+      <AlignJustify size={16} />
+    </ToolbarButton>
+
+    <Divider />
+
+    {/* Lists & quote */}
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleBulletList().run()}
+      active={editor.isActive("bulletList")}
+      title="Elenco puntato"
+    >
+      <List size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleOrderedList().run()}
+      active={editor.isActive("orderedList")}
+      title="Elenco numerato"
+    >
+      <ListOrdered size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleBlockquote().run()}
+      active={editor.isActive("blockquote")}
+      title="Citazione"
+    >
+      <Quote size={16} />
+    </ToolbarButton>
+
+    <Divider />
+
+    {/* Extra */}
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+      title="Inserisci Blocco Codice"
+    >
+      <Code size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().setHorizontalRule().run()}
+      title="Inserisci Regola Orizzontale"
+    >
+      <Minus size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton
+      onClick={() => editor.chain().focus().toggleTaskList().run()}
+      title="Inserisci To-Do List"
+    >
+      <ClipboardList size={16} />
+    </ToolbarButton>
+
+    <ToolbarButton onClick={onMathClick} title="Inserisci formula matematica">
+      <SquareFunction size={16} />
+    </ToolbarButton>
+
+    <Divider />
+
+    {/* Tabelle */}
+    <TableMenu editor={editor} />
+  </div>
+);
 }

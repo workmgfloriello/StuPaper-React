@@ -188,41 +188,38 @@ export default function Editor({
   }, [editor, fileName]);
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden bg-gray-200">
-      {/* TOOLBAR */}
-      <div className="mt-2 flex flex-col items-center relative z-50">
-        <div className="flex items-center justify-center gap-5 align-middle">
-          {showMathPanel ? (
-            <ToolbarFade key="math">
-              {editor && (
-                <MathPanel
-                  onInsert={handleMathInsert}
-                  onClose={handleMathClose}
-                />
-              )}
-            </ToolbarFade>
-          ) : (
-            <ToolbarFade key="classic">
-              <TopBar editor={editor} onMathClick={handleMathClick} />
-            </ToolbarFade>
-          )}
-          <SaveBar editor={editor} />
-        </div>
-      </div>
+  <div className="flex h-full w-full flex-col overflow-hidden bg-gray-200 dark:bg-[#181818]">
+    {/* TOOLBAR */}
+    <div className="relative z-50 mt-2 flex flex-col items-center">
+      <div className="flex items-center justify-center gap-5 align-middle">
+        {showMathPanel ? (
+          <ToolbarFade key="math">
+            {editor && (
+              <MathPanel onInsert={handleMathInsert} onClose={handleMathClose} />
+            )}
+          </ToolbarFade>
+        ) : (
+          <ToolbarFade key="classic">
+            <TopBar editor={editor} onMathClick={handleMathClick} />
+          </ToolbarFade>
+        )}
 
-      {/* EDITOR */}
-      <div className="relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white">
-        <EditorContent editor={editor} />
-      </div>
-
-      {/* FOOTER */}
-      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-3 py-1 text-xs text-gray-500">
-        <span>
-          Informatica 4.0 - Progetto di Tecnologie Web e Mobile - A.A. 2023/2024
-        </span>
-
-        <span>04/09/2026</span>
+        <SaveBar editor={editor} />
       </div>
     </div>
-  );
+
+    {/* EDITOR */}
+    <div className="relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white dark:border-[#303030]">
+      <EditorContent editor={editor} />
+    </div>
+
+    {/* FOOTER */}
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-3 py-1 text-xs text-gray-500 dark:border-[#303030] dark:bg-[#252526] dark:text-[#9d9d9d]">
+      <span>
+        Informatica 4.0 - Progetto di Tecnologie Web e Mobile - A.A. 2023/2024
+      </span>
+      <span>04/09/2026</span>
+    </div>
+  </div>
+);
 }
