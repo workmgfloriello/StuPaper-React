@@ -1,4 +1,5 @@
 "use client";
+
 import { Course } from "@/interface/interface";
 import {
   createContext,
@@ -9,21 +10,17 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
-
-
+import CourseManager from "../manager/CourseManager";
 
 type CoursesContextType = {
   courses: Course[];
   setCourses: Dispatch<SetStateAction<Course[]>>;
+  updateRecent: (courseId: string, newRecent: boolean) => Promise<any>;
 };
 
 const CourseContext = createContext<CoursesContextType | null>(null);
 
-export function CoursesProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function CoursesProvider({ children }: { children: ReactNode }) {
   const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {
@@ -48,13 +45,24 @@ export function CoursesProvider({
     loadCourses();
   }, []);
 
+async function updateRecent(courseId: string, newRecent: boolean) {
+  const result = await CourseManager.updateRecent(courseId, newRecent);
+
+  if (result?.success) {
+    setCourses((currentCourses) =>
+      currentCourses.map((course) =>
+        course.id === courseId
+          ? { ...course, recent: newRecent }
+          : course,
+      ),
+    );
+  }
+
+  return result;
+}
+
   return (
-    <CourseContext.Provider
-      value={{
-        courses,
-        setCourses,
-      }}
-    >
+    <CourseContext.Provider value={{ courses, setCourses, updateRecent }}>
       {children}
     </CourseContext.Provider>
   );
@@ -64,11 +72,8 @@ export function useCourses() {
   const context = useContext(CourseContext);
 
   if (!context) {
-    throw new Error(
-      "useCourses must be used within a CoursesProvider"
-    );
+    throw new Error("useCourses must be used within a CoursesProvider");
   }
 
   return context;
 }
-

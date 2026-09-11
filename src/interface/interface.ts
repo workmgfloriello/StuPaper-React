@@ -19,11 +19,6 @@ export type Note = {
   data: Date;
 };
 
-export type FileData = {
-  name: string;
-  lastEdit: Date;
-};
-
 export type File = {
   id:string,
   name:string,
@@ -31,4 +26,19 @@ export type File = {
   course:string,
   description?:string,
   created_at: Date,
+}
+
+export type ElectronApi = {
+  //corsi
+  selectCourses?: () => Promise<any[]>;
+  insertCourse?: (course: any) => Promise<any>;
+  updateRecent?: (courseId: string, newRecent: boolean) => Promise<any>;
+
+  //file
+  createFile?: (file: File) => any;
+  exportPDF?: () => void | Promise<void>;
+  openFile?: (fileName: string) => any;
+  saveFile?: (data: any, name: any) => any;
+  delateFile?: (fileName: string) => any;
+  renameFile?: (fileName:string, newName:string) => any;
 }

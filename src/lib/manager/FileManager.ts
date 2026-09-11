@@ -1,5 +1,6 @@
 import { File } from "@/interface/interface";
 import { Editor } from "@tiptap/react";
+import { ElectronApi } from "@/interface/interface";
 
 interface SaveFilePickerOptions {
   suggestedName?: string;
@@ -15,14 +16,6 @@ interface OpenFilePickerOptions {
     description?: string;
     accept?: Record<string, string[]>;
   }>;
-}
-
-interface ElectronApi {
-  createFile?: (file: File) => any;
-  exportPDF?: () => void | Promise<void>;
-  openFile?: (fileName: string) => any;
-  saveFile?: (data: any, name: any) => any;
-  delateFile?: (fileName: string) => any;
 }
 
 declare global {
@@ -104,10 +97,15 @@ class CustomFileManager {
     console.log(save);
   }
 
-  delateFile(fileName: string){
+  delateFile(fileName: string) {
     const delate = window.electronAPI?.delateFile?.(fileName);
     return delate;
   }
+
+  closeFile() {
+    this.fileData = undefined;
+  }
+
   exportPDF() {
     // Funzione che permette di esportare in PDF
     if (!window.electronAPI?.exportPDF) {
@@ -117,8 +115,9 @@ class CustomFileManager {
     window.electronAPI.exportPDF();
   }
 
-  closeFile() {
-    this.fileData = undefined;
+  renameFile(fileName: string, newName: string) {
+    const rename = window.electronAPI?.renameFile?.(fileName,newName);
+    return rename
   }
 
   //UTIL

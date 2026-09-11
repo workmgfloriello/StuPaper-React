@@ -1,6 +1,7 @@
-import FileManager from "@/editor/extension/FileManager";
+import FileManager from "@/lib/manager/FileManager";
 import { File } from "@/interface/interface";
 import { useCourses } from "@/lib/context/CoursesContext";
+import { useFiles } from "@/lib/context/NotesContext";
 import { generateUUID } from "@/lib/utils/uuid";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -10,9 +11,11 @@ export default function CreateAppuntiPage() {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
+  const { createFile } = useFiles();
 
   const { courses } = useCourses();
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -27,11 +30,15 @@ const navigate = useNavigate();
       course: course,
       created_at: new Date(),
     };
+console.log("PRIMA AWAIT")
 
-    const create = await FileManager.createFile(newFile);
+    const create = await createFile(newFile);
+    console.log("DOPO AWAIT")
+    console.log(create)
     if (create) {
-  navigate(`/editor/${encodeURIComponent(newFile.name)}`);
-}
+  
+      navigate(`/editor/${encodeURIComponent(newFile.name)}`);
+    }
   };
 
   return (

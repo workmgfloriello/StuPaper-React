@@ -77,6 +77,12 @@ export default function Sidebar() {
 
       {/* Nuovo appunto */}
       <div className="shrink-0 px-3">
+        <Link 
+        className="mb-2 flex h-10 w-full items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-lg transition hover:bg-gray-100 dark:border-[#303030] dark:bg-[#252526] dark:hover:bg-[#2a2d2e]"
+        to={"/corsiinfo/:corsoId"}>
+        TEST INFO
+        </Link>
+
         <button
           onClick={toggleTheme}
           className="mb-2 flex h-10 w-full items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-lg transition hover:bg-gray-100 dark:border-[#303030] dark:bg-[#252526] dark:hover:bg-[#2a2d2e]"

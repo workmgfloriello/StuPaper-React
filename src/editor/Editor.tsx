@@ -33,7 +33,7 @@ import MathPanel from "./components/MathPanel";
 import CustomBlockquote from "./extension/CustomBlockquote";
 import { useEffect, useState, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
-import FileManager from "./extension/FileManager";
+import FileManager from "../lib/manager/FileManager";
 import FileBar from "./components/FileBar";
 import BottomBar from "./components/BottomBar";
 import Sidebar from "@/components/Sidebar";
@@ -185,12 +185,14 @@ export default function Editor({
 
   useEffect(() => {
     if (!editor) return;
-
+    FileManager.closeFile();
+    
     FileManager.setEditor(editor);
 
     const openFile = async () => {
       const file = await FileManager.openFile(fileName);
       setFileMetadata(file);
+      console.log(file)
     };
 
     void openFile();

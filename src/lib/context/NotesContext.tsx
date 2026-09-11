@@ -9,13 +9,16 @@ import {
   useEffect,
   useState,
 } from "react";
+
 import { File } from "@/interface/interface";
-import FileManager from "../../editor/extension/FileManager";
+import FileManager from "../manager/FileManager";
 
 type FilesContextType = {
   files: File[];
+  createFile: (newFile: File) => Promise<any>;
   setFiles: Dispatch<SetStateAction<File[]>>;
   deleteFile: (fileName: string) => Promise<any>;
+  renameFile: (fileName: string, newName: string) => Promise<any>;
 };
 
 const FilesContext = createContext<FilesContextType | null>(null);
@@ -52,15 +55,46 @@ export function FilesProvider({ children }: { children: ReactNode }) {
 
     if (result?.success) {
       setFiles((currentFiles) =>
-        currentFiles.filter((file) => file.name !== fileName)
+        currentFiles.filter((file) => file.name !== fileName),
       );
     }
 
     return result;
   }
 
+  async function renameFile(fileName: string, newName: string) {
+    const result = await FileManager.renameFile(fileName, newName);
+
+    if (result?.success) {
+      setFiles((currentFiles) =>
+        currentFiles.map((file) =>
+          file.name === fileName
+            ? {
+                ...file,
+                name: newName,
+              }
+            : file,
+        ),
+      );
+    }
+
+    return result;
+  }
+
+  async function createFile(newFile: File) {
+    const result = await FileManager.createFile(newFile);
+
+    if (result?.success && result.file) {
+      setFiles((currentFiles) => [...currentFiles, result.file]);
+    }
+
+    return result;
+  }
+
   return (
-    <FilesContext.Provider value={{ files, setFiles, deleteFile }}>
+    <FilesContext.Provider
+      value={{ files, createFile, setFiles, deleteFile, renameFile }}
+    >
       {children}
     </FilesContext.Provider>
   );

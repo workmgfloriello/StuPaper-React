@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { insertCourse, selectCourses } from "../../database/ManageDatabase.ts";
+import { insertCourse, selectCourses, updateRecent } from "../../database/ManageDatabase.ts";
 
 export function registerCourseHandlers() {
   //Insert al DB
@@ -11,4 +11,9 @@ export function registerCourseHandlers() {
   ipcMain.handle("courses:select", () => {
     return selectCourses();
   });
+
+  //Update Recente
+  ipcMain.handle("courses:updateRecent", (_, courseId: string, newRecent:boolean) =>{
+    return updateRecent(courseId,newRecent);
+  })
 }

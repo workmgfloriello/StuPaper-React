@@ -1,7 +1,7 @@
 "use client";
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useFiles } from "@/lib/context/NotesContext";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, FileText } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -13,7 +13,7 @@ export default function HomepageNotes() {
   const [textCourse, setTextCourse] = useState("");
 
   const navigate = useNavigate();
-  
+
   const handleSelectChange = (e: { target: { value: any } }) => {
     console.log(e.target.value);
     setSelectedCourse(e.target.value);
@@ -25,8 +25,8 @@ export default function HomepageNotes() {
   };
   console.log(files);
 
-  const handleOpenClick = (name:string) => {
-    if(name){
+  const handleOpenClick = (name: string) => {
+    if (name) {
       navigate(`/editor/${encodeURIComponent(name)}`);
     }
   };
@@ -132,15 +132,18 @@ export default function HomepageNotes() {
             }
 
             let color = "";
+            let courseName = "";
 
-            const findColor = courses.find(
+            const findCourse = courses.find(
               (course) => course.id == note.course,
             );
 
-            if (findColor?.color) {
-              color = findColor.color;
+            if (findCourse) {
+              color = findCourse.color;
+              courseName = findCourse.name;
             } else {
               color = "#6366f1";
+              courseName = "Nessun Corso";
             }
 
             return (
@@ -164,34 +167,15 @@ export default function HomepageNotes() {
                 dark:hover:border-[#454545]
                 dark:hover:bg-[#2a2d2e]
               "
-                
                 onClick={(event) => handleOpenClick(note.name)}
               >
                 {/* Icon */}
                 <div className="flex min-w-0 items-center gap-4">
                   <div
-                    className="
-                    flex h-11 w-11 shrink-0
-                    items-center justify-center
-                    rounded-lg
-                    text-white
-                  "
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white"
                     style={{ backgroundColor: color }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      className="h-5 w-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 14.25v-8.5a2.25 2.25 0 0 0-2.25-2.25h-10.5A2.25 2.25 0 0 0 4.5 5.75v12.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-1.5m-9-7.5h6m-6 3h6"
-                      />
-                    </svg>
+                    <FileText className="h-5 w-5" strokeWidth={1.8} />
                   </div>
 
                   {/* Info */}
@@ -201,7 +185,7 @@ export default function HomepageNotes() {
                     </h2>
 
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-[#9d9d9d]">
-                      <span>{note.course}</span>
+                      <span style={{ backgroundColor: color }} className="text-gray-800 pl-2 pr-2 pt-1 pb-1 font-bold rounded-xl">{courseName}</span>
 
                       <span className="text-gray-300 dark:text-[#454545]">
                         •

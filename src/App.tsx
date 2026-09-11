@@ -12,6 +12,7 @@ import RouteWatcher from "./RouteWatcher";
 import FrameTopbar from "./FrameTopbar";
 import { ThemeProvider } from "./lib/context/ThemeContext";
 import EditorPage from "./pages/EditorPage";
+import { CourseInfoPage } from "./pages/CourseInfoPage";
 
 export default function App() {
   return (
@@ -32,7 +33,7 @@ export default function App() {
                   <Route path="/corsi" element={<CorsiPage />} />
                   <Route path="/appunti" element={<AppuntiPage />} />
                   <Route path="/newappunti" element={<CreateAppuntiPage />} />
-
+                  <Route path="/corsi/:corsoId" element={<CourseInfoPage />}/>
                   {/* Route editor */}
                   <Route path="/editor/:fileName" element={<EditorPage />} />
                 </Routes>

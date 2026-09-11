@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
-import FileManager from "./editor/extension/FileManager";
+import FileManager from "./lib/manager/FileManager";
 
 export default function RouteWatcher() {
   const location = useLocation();

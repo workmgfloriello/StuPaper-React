@@ -124,6 +124,23 @@ export function selectCourses() {
     .all();
 }
 
+export function updateRecent(courseId: string,newRecent:boolean){
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    UPDATE courses
+    SET recent = ?
+    WHERE id = ?
+  `);
+
+  const result = stmt.run(newRecent ? 1 : 0, courseId);
+  return {
+    success: result.changes > 0,
+    changes:  result.changes,
+  };
+  return
+}
+
 /**
  * =========================
  * NOTES
@@ -175,4 +192,15 @@ export function delateNotes(name: string) {
   return result;
 }
 
+export function renameNotes(oldName: string, newName: string) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    UPDATE notes
+    SET name = ?
+    WHERE name = ?
+  `);
+
+  return stmt.run(newName, oldName);
+}
 
