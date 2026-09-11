@@ -16,6 +16,7 @@ type CoursesContextType = {
   courses: Course[];
   setCourses: Dispatch<SetStateAction<Course[]>>;
   updateRecent: (courseId: string, newRecent: boolean) => Promise<any>;
+  delateCourse: (courseId: string) => Promise<any>;
 };
 
 const CourseContext = createContext<CoursesContextType | null>(null);
@@ -28,8 +29,8 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
       try {
         const electronAPI = window.electronAPI as
           | (typeof window.electronAPI & {
-              selectCourses?: () => Promise<Course[]>;
-            })
+            selectCourses?: () => Promise<Course[]>;
+          })
           | undefined;
 
         const coursesFromDatabase = await electronAPI?.selectCourses?.();
@@ -45,16 +46,28 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
     loadCourses();
   }, []);
 
-async function updateRecent(courseId: string, newRecent: boolean) {
-  const result = await CourseManager.updateRecent(courseId, newRecent);
+  async function updateRecent(courseId: string, newRecent: boolean) {
+    const result = await CourseManager.updateRecent(courseId, newRecent);
 
-  if (result?.success) {
-    setCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === courseId
-          ? { ...course, recent: newRecent }
-          : course,
-      ),
+    if (result?.success) {
+      setCourses((currentCourses) =>
+        currentCourses.map((course) =>
+          course.id === courseId
+            ? { ...course, recent: newRecent }
+            : course,
+        ),
+      );
+    }
+
+    return result;
+  }
+
+async function delateCourse(courseId: string) {
+  const result = await CourseManager.delateCourse(courseId);
+
+  if (result?.changes) {
+    setCourses((prevCourses) =>
+      prevCourses.filter((course) => course.id !== courseId)
     );
   }
 
@@ -62,7 +75,7 @@ async function updateRecent(courseId: string, newRecent: boolean) {
 }
 
   return (
-    <CourseContext.Provider value={{ courses, setCourses, updateRecent }}>
+    <CourseContext.Provider value={{ courses, setCourses, updateRecent, delateCourse }}>
       {children}
     </CourseContext.Provider>
   );

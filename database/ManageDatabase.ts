@@ -11,7 +11,7 @@ let db: DatabaseSync | null = null;
  */
 export function setDatabase(path: string) {
   db = new DatabaseSync(path);
-  if(db){
+  if (db) {
     initializeDatabase(db);
   }
 }
@@ -128,6 +128,17 @@ export function updateRecent(courseId: string, newRecent: boolean) {
     changes: result.changes,
   };
   return
+}
+
+export function delateCourseDB(courseId: string) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`   
+     DELETE FROM courses
+    WHERE id = ?`)
+  const result = stmt.run(courseId);
+
+  return result;
 }
 
 /**

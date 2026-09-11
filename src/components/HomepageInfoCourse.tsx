@@ -1,4 +1,5 @@
 import { Course } from "@/interface/interface";
+import { useCourses } from "@/lib/context/CoursesContext";
 import {
   BookOpen,
   GraduationCap,
@@ -12,6 +13,15 @@ import { useNavigate } from "react-router-dom";
 
 export function HomepageInfoCourse({ course }: { course: Course }) {
   const navigate = useNavigate();
+  const { delateCourse } = useCourses();
+
+  const handleDelateClick = async () => {
+    const result = await delateCourse(course.id);
+    console.log(result)
+    if (result?.changes== 1) {
+      navigate("/");
+    }
+  };
 
   return (
     <div className="min-h-full w-full overflow-y-auto bg-gray-50 p-6 text-gray-900 transition-colors dark:bg-[#181818] dark:text-[#cccccc]">
@@ -219,7 +229,7 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
               </p>
             </div>
 
-            <button type="button" className="shrink-0 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 dark:border-[#5a2a2a] dark:bg-[#3a1f1f] dark:text-[#f48771] dark:hover:bg-[#4a2525]">
+            <button onClick={handleDelateClick} type="button" className="shrink-0 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 dark:border-[#5a2a2a] dark:bg-[#3a1f1f] dark:text-[#f48771] dark:hover:bg-[#4a2525]">
               Elimina corso
             </button>
           </div>

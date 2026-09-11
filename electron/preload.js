@@ -12,11 +12,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   saveFile: (data, name) => ipcRenderer.invoke("file:save", data, name),
   exportPDF: () => ipcRenderer.invoke("export-pdf"),
   selectFile: () => ipcRenderer.invoke("file:select"),
-  delateFile: (fileName) => ipcRenderer.invoke("file:delate",fileName),
-  renameFile: (fileName,newName) => ipcRenderer.invoke("file:rename",fileName,newName),
-  
+  delateFile: (fileName) => ipcRenderer.invoke("file:delate", fileName),
+  renameFile: (fileName, newName) => ipcRenderer.invoke("file:rename", fileName, newName),
+
   //course
   insertCourse: (course) => ipcRenderer.invoke("courses:insert", course),
   selectCourses: () => ipcRenderer.invoke("courses:select"),
-  updateRecent: (courseId,newRecent) => ipcRenderer.invoke("courses:updateRecent", courseId,newRecent),
+  updateRecent: (courseId, newRecent) => ipcRenderer.invoke("courses:updateRecent", courseId, newRecent),
+  delateCourse: (courseId) => ipcRenderer.invoke("courses:delate", courseId),
 });

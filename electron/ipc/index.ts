@@ -5,6 +5,6 @@ import { registerWindowHandlers } from "./window-handlers.ts";
 
 export function registerIpcHandlers(win: BrowserWindow, dirPath: string) {
   registerWindowHandlers(win);
-  registerCourseHandlers();
+  registerCourseHandlers(dirPath);
   registerFileHandlers(win, dirPath);
 }

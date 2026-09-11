@@ -12,6 +12,10 @@ class CustomCourseManager {
   async updateRecent(courseId: string, newRecent: boolean) {
     return await window.electronAPI?.updateRecent?.(courseId, newRecent);
   }
+
+  async delateCourse(courseId: string){
+    return await window.electronAPI?.delateCourse?.(courseId);
+  }
 }
 
 const CourseManager = new CustomCourseManager();

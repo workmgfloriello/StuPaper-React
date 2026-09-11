@@ -33,6 +33,7 @@ export type ElectronApi = {
   selectCourses?: () => Promise<any[]>;
   insertCourse?: (course: any) => Promise<any>;
   updateRecent?: (courseId: string, newRecent: boolean) => Promise<any>;
+  delateCourse?: (courseId: string) => any;
 
   //file
   createFile?: (file: File) => any;
