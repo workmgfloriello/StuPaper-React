@@ -1,7 +1,4 @@
 import { DatabaseSync } from "node:sqlite";
-import path from "node:path";
-import fs from "node:fs";
-import { app } from "electron";
 
 import type { Course, Note } from "../src/interface/interface.ts";
 
@@ -12,34 +9,26 @@ let db: DatabaseSync | null = null;
  * DATABASE
  * =========================
  */
-
+export function setDatabase(path: string) {
+  db = new DatabaseSync(path);
+  if(db){
+    initializeDatabase(db);
+  }
+}
 export function getDatabase(): DatabaseSync {
+
   if (db) {
     return db;
+  } else {
+    throw new Error("Database has not been initialized");
   }
 
-  const dataPath = app.getPath("userData");
-
-  fs.mkdirSync(dataPath, {
-    recursive: true,
-  });
-
-  const dbPath = path.join(dataPath, "stupaperBase.db");
-
-  db = new DatabaseSync(dbPath);
-
-  // Abilita foreign keys
-  db.exec("PRAGMA foreign_keys = ON");
-
-  initializeDatabase(db);
-
-  console.log("SQLite:", dbPath);
-
-  return db;
 }
 
 function initializeDatabase(database: DatabaseSync) {
   database.exec(`
+     PRAGMA foreign_keys = ON;
+
     CREATE TABLE IF NOT EXISTS courses (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -124,7 +113,7 @@ export function selectCourses() {
     .all();
 }
 
-export function updateRecent(courseId: string,newRecent:boolean){
+export function updateRecent(courseId: string, newRecent: boolean) {
   const database = getDatabase();
 
   const stmt = database.prepare(`
@@ -136,7 +125,7 @@ export function updateRecent(courseId: string,newRecent:boolean){
   const result = stmt.run(newRecent ? 1 : 0, courseId);
   return {
     success: result.changes > 0,
-    changes:  result.changes,
+    changes: result.changes,
   };
   return
 }
@@ -147,8 +136,8 @@ export function updateRecent(courseId: string,newRecent:boolean){
  * =========================
  */
 
-export function insertNotes(note: Note){
-   const database = getDatabase();
+export function insertNotes(note: Note) {
+  const database = getDatabase();
 
   const stmt = database.prepare(`
     INSERT INTO notes (
@@ -165,7 +154,7 @@ export function insertNotes(note: Note){
     note.course,
     note.name,
     note.data.toISOString()
-  ); 
+  );
 
   return note;
 

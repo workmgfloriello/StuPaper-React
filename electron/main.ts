@@ -2,7 +2,7 @@ import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "node:fs";
-import { getDatabase } from "../database/ManageDatabase.ts";
+import { getDatabase, setDatabase } from "../database/ManageDatabase.ts";
 import { registerIpcHandlers } from "./ipc/index.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -11,16 +11,18 @@ const __dirname = path.dirname(__filename);
 const isDev = !app.isPackaged;
 
 let win: BrowserWindow;
-let logoPath = path.join(__dirname,'../public/assets/logo.ico');
-
+let logoPath = path.join(__dirname, '../public/assets/logo.ico');
+const documentsPath = path.join(app.getPath("userData"), "documents");
+const basePath = path.join(app.getPath("userData"));
+const databasePath = path.join(app.getPath("userData"), "stupaperBAse.db");
 
 function createWindow() {
   win = new BrowserWindow({
     width: 1400,
     height: 900,
-    frame:false,
+    frame: false,
     icon: logoPath,
-    title:"StuPaper",
+    title: "StuPaper",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -40,7 +42,6 @@ function createWindow() {
 }
 app.whenReady().then(() => {
   createWindow();
-  getDatabase();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -48,11 +49,15 @@ app.whenReady().then(() => {
     }
   });
 
-  const documentsPath = path.join(app.getPath("userData"), "documents");
+
 
   fs.mkdirSync(documentsPath, {
     recursive: true,
   });
+
+  createDatabase();
+  
+
 
   registerIpcHandlers(win, documentsPath);
   console.log("Documents:", documentsPath);
@@ -63,4 +68,16 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+async function createDatabase() {
+  if (!fs.existsSync(databasePath)) {
+    fs.writeFileSync(
+      databasePath,
+      "",
+      "utf-8")
+  }
+
+  setDatabase(databasePath);
+
+}
 

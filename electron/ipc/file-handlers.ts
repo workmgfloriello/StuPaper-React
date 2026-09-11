@@ -7,11 +7,13 @@ import {
   insertNotes,
   selectNotes,
   renameNotes,
+  setDatabase,
 } from "../../database/ManageDatabase.ts";
 
 import type { File } from "../../src/interface/interface.ts";
 
 export function registerFileHandlers(win: BrowserWindow, dirPath: string) {
+
   //Creare File
   ipcMain.handle("file:create", async (_event, file: File) => {
     const filePath = path.join(dirPath, `${file.name}.json`);

@@ -20,11 +20,11 @@ export type Note = {
 };
 
 export type File = {
-  id:string,
-  name:string,
-  directory:string,
-  course:string,
-  description?:string,
+  id: string,
+  name: string,
+  directory: string,
+  course: string,
+  description?: string,
   created_at: Date,
 }
 
@@ -40,5 +40,5 @@ export type ElectronApi = {
   openFile?: (fileName: string) => any;
   saveFile?: (data: any, name: any) => any;
   delateFile?: (fileName: string) => any;
-  renameFile?: (fileName:string, newName:string) => any;
+  renameFile?: (fileName: string, newName: string) => any;
 }
