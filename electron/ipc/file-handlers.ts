@@ -7,7 +7,6 @@ import {
   insertNotes,
   selectNotes,
   renameNotes,
-  setDatabase,
 } from "../../database/ManageDatabase.ts";
 
 import type { File } from "../../src/interface/interface.ts";

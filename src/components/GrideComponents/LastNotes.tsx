@@ -2,10 +2,18 @@
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useFiles } from "@/lib/context/NotesContext.tsx";
 import { Circle, NotebookPen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function notes() {
   const { courses } = useCourses();
   const { files } = useFiles();
+  const navigator = useNavigate()
+
+  const handleNoteClick = (e:any) =>{
+    const name = e.currentTarget.dataset.ref;
+    navigator(`/editor/${encodeURIComponent(name)}`)
+  }
+
   return (
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-300 bg-white transition-colors dark:border-[#303030] dark:bg-[#252526]">
       {/* Header */}
@@ -34,6 +42,8 @@ export default function notes() {
           return (
             <div
               key={note.id}
+              data-ref = {note.name}
+              onClick={(e)=>handleNoteClick(e)}
               className="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-[#2a2d2e]"
             >
               <div

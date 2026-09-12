@@ -224,7 +224,7 @@ export default function Editor({
       </div>
 
       {/* EDITOR */}
-      <div className="relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white dark:border-[#303030]">
+      <div className="editor-container relative z-10 mx-auto mt-5 min-h-0 w-198.5 flex-1 overflow-y-auto rounded-t-lg border border-gray-200 bg-white dark:border-[#303030]">
         <EditorContent editor={editor} />
       </div>
 
