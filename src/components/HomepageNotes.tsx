@@ -2,8 +2,8 @@
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useFiles } from "@/lib/context/NotesContext";
 import { ChevronRight, FileText } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function HomepageNotes() {
   const { files } = useFiles();
@@ -11,6 +11,8 @@ export default function HomepageNotes() {
 
   const [selectedCourse, setSelectedCourse] = useState("all");
   const [textCourse, setTextCourse] = useState("");
+
+  const { appuntiFilter } = useParams();
 
   const navigate = useNavigate();
 
@@ -30,6 +32,13 @@ export default function HomepageNotes() {
       navigate(`/editor/${encodeURIComponent(name)}`);
     }
   };
+
+  // Aggiorna select
+  useEffect(() => {
+    if (appuntiFilter && appuntiFilter!="all") {
+      setSelectedCourse(appuntiFilter);
+    }
+  }, [appuntiFilter]);
 
   return (
     <main className="min-h-full bg-gray-50 px-6 py-8 text-gray-900 transition-colors dark:bg-[#181818] dark:text-[#cccccc]">
@@ -87,6 +96,7 @@ export default function HomepageNotes() {
             dark:focus:border-[#007acc]
           "
             onChange={handleSelectChange}
+            value={selectedCourse}
           >
             <option value="all">Tutti i corsi</option>
 
@@ -185,7 +195,12 @@ export default function HomepageNotes() {
                     </h2>
 
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-[#9d9d9d]">
-                      <span style={{ backgroundColor: color }} className="text-gray-800 pl-2 pr-2 pt-1 pb-1 font-bold rounded-xl">{courseName}</span>
+                      <span
+                        style={{ backgroundColor: color }}
+                        className="text-gray-800 pl-2 pr-2 pt-1 pb-1 font-bold rounded-xl"
+                      >
+                        {courseName}
+                      </span>
 
                       <span className="text-gray-300 dark:text-[#454545]">
                         •

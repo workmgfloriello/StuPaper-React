@@ -13,9 +13,22 @@ class CustomCourseManager {
     return await window.electronAPI?.updateRecent?.(courseId, newRecent);
   }
 
-  async delateCourse(courseId: string){
+  async delateCourse(courseId: string) {
     return await window.electronAPI?.delateCourse?.(courseId);
   }
+
+  async updateColor(courseId: string, color: string) {
+    return await window.electronAPI?.updateColor?.(courseId, color);
+  }
+
+  async updateNoteCount(courseId: string, count: number) {
+    return await window.electronAPI?.updateNoteCount?.(courseId, count);
+  }
+
+  async updateCourse(courseId: string,course: {id: string;name: string;professor: string;description: string;year: number;semester: number;}) { 
+    return await window.electronAPI?.updateCourse?.(courseId,course) 
+  }
+
 }
 
 const CourseManager = new CustomCourseManager();

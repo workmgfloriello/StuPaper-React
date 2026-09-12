@@ -29,7 +29,7 @@ const navItems = [
     icon: BookOpen,
   },
   {
-    href: "/appunti",
+    href: "/appunti/all",
     label: "Tutti gli appunti",
     icon: FileText,
   },
@@ -77,12 +77,6 @@ export default function Sidebar() {
 
       {/* Nuovo appunto */}
       <div className="shrink-0 px-3">
-        <Link 
-        className="mb-2 flex h-10 w-full items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-lg transition hover:bg-gray-100 dark:border-[#303030] dark:bg-[#252526] dark:hover:bg-[#2a2d2e]"
-        to={"/corsiinfo/:corsoId"}>
-        TEST INFO
-        </Link>
-
         <button
           onClick={toggleTheme}
           className="mb-2 flex h-10 w-full items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-lg transition hover:bg-gray-100 dark:border-[#303030] dark:bg-[#252526] dark:hover:bg-[#2a2d2e]"
@@ -148,7 +142,7 @@ export default function Sidebar() {
                         className={`flex h-10 w-full shrink-0 items-center gap-3 rounded-lg px-3 text-sm transition ${active ? "bg-gray-100 text-gray-900 dark:bg-[#2a2d2e] dark:text-[#cccccc]" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-[#9d9d9d] dark:hover:bg-[#2a2d2e] dark:hover:text-[#cccccc]"}`}
                       >
                         <span
-                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold text-white"
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold text-gray-900 dark:text-white"
                           style={{ backgroundColor: course.color }}
                         >
                           {course.code}

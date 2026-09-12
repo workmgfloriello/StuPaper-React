@@ -3,25 +3,25 @@ import { Course } from "@/interface/interface.tsx";
 import { useCourses } from "@/lib/context/CoursesContext";
 import { generateUUID } from "@/lib/utils/uuid";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function HomepageCourses() {
   const { courses, setCourses, updateRecent } = useCourses();
-
   const [showForm, setShowForm] = useState(false);
-
-const [formData, setFormData] = useState<Course>({
-  id: "",
-  name: "",
-  code: "",
-  professor: "",
-  cfu: 0,
-  semester: 1,
-  notesCount: 0,
-  description: "",
-  year: 1,
-  recent: false,
-  color: "#6366f1",
-});
+  const [formData, setFormData] = useState<Course>({
+    id: "",
+    name: "",
+    code: "",
+    professor: "",
+    cfu: 0,
+    semester: 1,
+    notes_count: 0,
+    description: "",
+    year: 1,
+    recent: false,
+    color: "#6366f1",
+  });
+  const navigator = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -39,59 +39,61 @@ const [formData, setFormData] = useState<Course>({
     }));
   };
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  console.log("SEMESTER FORM:", formData.semester);
-  console.log("YEAR FORM:", formData.year);
+    console.log("SEMESTER FORM:", formData.semester);
+    console.log("YEAR FORM:", formData.year);
 
-  const newCourse: Course = {
-    id: generateUUID().toString(),
-    name: formData.name,
-    code: formData.code,
-    professor: formData.professor,
-    cfu: Number(formData.cfu),
-    semester: Number(formData.semester),
-    notesCount: 0,
-    description: formData.description,
-    color: formData.color,
-    recent: false,
-    year: Number(formData.year),
-  };
-
-  console.log("NUOVO CORSO:", newCourse);
-
-  try {
-    const dbInsert = await (window.electronAPI as any)?.insertCourse(newCourse);
-
-    console.log("RISPOSTA DATABASE:", dbInsert);
-
-    if (dbInsert?.success === false) {
-      console.error("Errore inserimento corso:", dbInsert);
-      return;
-    }
-
-    setCourses((prev) => [...prev, newCourse]);
-
-    setFormData({
-      id: "",
-      name: "",
-      code: "",
-      professor: "",
-      cfu: 0,
-      semester: 1,
-      notesCount: 0,
-      description: "",
-      year: 1,
+    const newCourse: Course = {
+      id: generateUUID().toString(),
+      name: formData.name,
+      code: formData.code,
+      professor: formData.professor,
+      cfu: Number(formData.cfu),
+      semester: Number(formData.semester),
+      notes_count: 0,
+      description: formData.description,
+      color: formData.color,
       recent: false,
-      color: "#6366f1",
-    });
+      year: Number(formData.year),
+    };
 
-    setShowForm(false);
-  } catch (error) {
-    console.error("Error inserting course:", error);
-  }
-};
+    console.log("NUOVO CORSO:", newCourse);
+
+    try {
+      const dbInsert = await (window.electronAPI as any)?.insertCourse(
+        newCourse,
+      );
+
+      console.log("RISPOSTA DATABASE:", dbInsert);
+
+      if (dbInsert?.success === false) {
+        console.error("Errore inserimento corso:", dbInsert);
+        return;
+      }
+
+      setCourses((prev) => [...prev, newCourse]);
+
+      setFormData({
+        id: "",
+        name: "",
+        code: "",
+        professor: "",
+        cfu: 0,
+        semester: 1,
+        notes_count: 0,
+        description: "",
+        year: 1,
+        recent: false,
+        color: "#6366f1",
+      });
+
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error inserting course:", error);
+    }
+  };
 
   const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     const courseId = e.currentTarget.id;
@@ -99,6 +101,8 @@ const [formData, setFormData] = useState<Course>({
     const clickedCourse = courses.find((course) => course.id === courseId);
 
     if (!clickedCourse) return;
+
+    navigator(`/corsi/${clickedCourse.id}`);
 
     if (clickedCourse.recent) {
       console.log("CORSO GIA IMPOSTATO COME RECENTE");
@@ -282,14 +286,42 @@ const [formData, setFormData] = useState<Course>({
                 Colore
               </label>
 
-              <input
-                type="color"
-                name="color"
-                value={formData.color || "#6366f1"}
-                onChange={handleChange}
-                required
-                className="h-12 w-full cursor-pointer rounded-xl border border-gray-300 bg-white p-1 outline-none focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e]"
-              />
+              <div className="grid grid-cols-6 gap-3">
+                {[
+                  "#6366f1", // Indaco
+                  "#3b82f6", // Blu
+                  "#06b6d4", // Ciano
+                  "#10b981", // Verde
+                  "#84cc16", // Lime
+                  "#eab308", // Giallo
+                  "#f59e0b", // Ambra
+                  "#f97316", // Arancio
+                  "#ef4444", // Rosso
+                  "#ec4899", // Rosa
+                  "#a855f7", // Viola
+                  "#64748b", // Ardesia
+                ].map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() =>
+                      handleChange({
+                        target: {
+                          name: "color",
+                          value: color,
+                        },
+                      } as React.ChangeEvent<HTMLInputElement>)
+                    }
+                    className={`h-10 w-10 rounded-xl transition hover:scale-110 ${
+                      formData.color === color
+                        ? "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#252526] dark:ring-indigo-400"
+                        : ""
+                    }`}
+                    style={{ backgroundColor: color }}
+                    aria-label={`Seleziona colore ${color}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
@@ -376,7 +408,7 @@ const [formData, setFormData] = useState<Course>({
                 <span>Appunti</span>
 
                 <span className="font-medium text-gray-900 dark:text-[#cccccc]">
-                  {course.notesCount}
+                  {course.notes_count}
                 </span>
               </div>
             </div>

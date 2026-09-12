@@ -19,6 +19,7 @@ type FilesContextType = {
   setFiles: Dispatch<SetStateAction<File[]>>;
   deleteFile: (fileName: string) => Promise<any>;
   renameFile: (fileName: string, newName: string) => Promise<any>;
+  removeFilesByCourse: (courseId: string) => void;
 };
 
 const FilesContext = createContext<FilesContextType | null>(null);
@@ -91,9 +92,15 @@ export function FilesProvider({ children }: { children: ReactNode }) {
     return result;
   }
 
+  function removeFilesByCourse(courseId: string) {
+  setFiles((currentFiles) =>
+    currentFiles.filter((file) => file.course !== courseId)
+  );
+}
+
   return (
     <FilesContext.Provider
-      value={{ files, createFile, setFiles, deleteFile, renameFile }}
+      value={{ files, createFile, setFiles, deleteFile, renameFile, removeFilesByCourse }}
     >
       {children}
     </FilesContext.Provider>

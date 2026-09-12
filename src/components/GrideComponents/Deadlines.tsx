@@ -2,7 +2,7 @@ import { CalendarX } from "lucide-react";
 
 export default function Deadlines() {
   return (
-  <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white transition-colors dark:border-[#303030] dark:bg-[#252526]">
+  <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-300 bg-white transition-colors dark:border-[#303030] dark:bg-[#252526]">
     {/* Header */}
     <div className="flex shrink-0 items-center gap-2 px-8 py-5">
       <CalendarX className="h-5 w-5 text-red-700 dark:text-red-400" />

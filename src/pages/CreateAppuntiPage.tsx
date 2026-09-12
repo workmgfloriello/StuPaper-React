@@ -1,4 +1,3 @@
-import FileManager from "@/lib/manager/FileManager";
 import { File } from "@/interface/interface";
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useFiles } from "@/lib/context/NotesContext";
@@ -12,8 +11,8 @@ export default function CreateAppuntiPage() {
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
   const { createFile } = useFiles();
+  const { courses, updateNoteCount } = useCourses();
 
-  const { courses } = useCourses();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,13 +29,12 @@ export default function CreateAppuntiPage() {
       course: course,
       created_at: new Date(),
     };
-console.log("PRIMA AWAIT")
 
     const create = await createFile(newFile);
-    console.log("DOPO AWAIT")
-    console.log(create)
+
     if (create) {
-  
+      const update = await updateNoteCount(course, 1);
+      console.log("UPDATE: "+update);
       navigate(`/editor/${encodeURIComponent(newFile.name)}`);
     }
   };

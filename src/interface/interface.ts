@@ -6,18 +6,12 @@ export interface Course {
   cfu: number;
   semester: number;
   year: number;
-  notesCount: number;
+  notes_count: number;
   description: string;
   color: string;
   recent: boolean;
 }
 
-export type Note = {
-  id: string;
-  name: string;
-  course: string;
-  data: Date;
-};
 
 export type File = {
   id: string,
@@ -33,6 +27,8 @@ export type ElectronApi = {
   selectCourses?: () => Promise<any[]>;
   insertCourse?: (course: any) => Promise<any>;
   updateRecent?: (courseId: string, newRecent: boolean) => Promise<any>;
+  updateColor?: (courseId: string, color: string) => Promise<any>;
+  updateNoteCount?: (courseId: string, count: number) => Promise<any>;
   delateCourse?: (courseId: string) => any;
 
   //file
@@ -42,4 +38,5 @@ export type ElectronApi = {
   saveFile?: (data: any, name: any) => any;
   delateFile?: (fileName: string) => any;
   renameFile?: (fileName: string, newName: string) => any;
+  updateCourse: (courseId: string, course: any) => any;
 }

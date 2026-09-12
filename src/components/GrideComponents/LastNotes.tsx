@@ -7,7 +7,7 @@ export default function notes() {
   const { courses } = useCourses();
   const { files } = useFiles();
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white transition-colors dark:border-[#303030] dark:bg-[#252526]">
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-300 bg-white transition-colors dark:border-[#303030] dark:bg-[#252526]">
       {/* Header */}
       <div className="flex shrink-0 items-center gap-2 px-8 py-5">
         <NotebookPen className="h-5 w-5 text-indigo-600 dark:text-[#4daafc]" />
@@ -48,7 +48,7 @@ export default function notes() {
               </p>
 
               <span
-                className="hidden rounded-md px-2 py-1 text-sm text-gray-800 font-bold sm:block"
+                className="hidden rounded-md px-2 py-1 text-sm text-gray-800 font-bold sm:block dark:text-white"
                 style={{ backgroundColor: color }}
               >
                 {courseName}

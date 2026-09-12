@@ -19,5 +19,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   insertCourse: (course) => ipcRenderer.invoke("courses:insert", course),
   selectCourses: () => ipcRenderer.invoke("courses:select"),
   updateRecent: (courseId, newRecent) => ipcRenderer.invoke("courses:updateRecent", courseId, newRecent),
+  updateColor: (courseId, color) => ipcRenderer.invoke("courses:updateColor", courseId, color),
+  updateNoteCount: (courseId, count) => ipcRenderer.invoke("courses:updateNoteCount", courseId, count),
   delateCourse: (courseId) => ipcRenderer.invoke("courses:delate", courseId),
+  updateCourse: (courseId, course) => ipcRenderer.invoke("courses:update", courseId, course),
 });

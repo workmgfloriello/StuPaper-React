@@ -31,7 +31,7 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/corsi" element={<CorsiPage />} />
-                  <Route path="/appunti" element={<AppuntiPage />} />
+                  <Route path="/appunti/:appuntiFilter" element={<AppuntiPage />} />
                   <Route path="/newappunti" element={<CreateAppuntiPage />} />
                   <Route path="/corsi/:corsoId" element={<CourseInfoPage />}/>
                   {/* Route editor */}

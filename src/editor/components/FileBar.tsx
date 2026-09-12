@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useFiles } from "@/lib/context/NotesContext";
 import DelateAlert from "./DelateAlert";
 import RenameAlert from "./RenameAlert";
+import { useCourses } from "@/lib/context/CoursesContext";
 
 interface FileBarProps {
   editor: Editor | null;
@@ -29,6 +30,7 @@ export default function FileBar({ editor, fileMeta }: FileBarProps) {
 
   const componentRef = useRef<HTMLDivElement>(null);
   const { deleteFile, renameFile } = useFiles();
+  const { updateNoteCount } = useCourses();
   const navigate = useNavigate();
 
   //click fuori chiudo menu
@@ -105,12 +107,12 @@ export default function FileBar({ editor, fileMeta }: FileBarProps) {
   };
 
   async function handleDelateFile() {
-    if (!fileMeta.name) return;
+    if (!fileMeta) return;
 
     const result = await deleteFile(fileMeta.name);
 
     if (result?.success) {
-      console.log("File eliminato");
+      updateNoteCount(fileMeta.course, 0);
       navigate("/appunti");
     }
   }

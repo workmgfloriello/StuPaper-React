@@ -1,6 +1,12 @@
 import { DatabaseSync } from "node:sqlite";
+import type { Course } from "../src/interface/interface.ts";
 
-import type { Course, Note } from "../src/interface/interface.ts";
+type Note = {
+  id: string;
+  name: string;
+  course: string;
+  data: Date;
+};
 
 let db: DatabaseSync | null = null;
 
@@ -16,18 +22,16 @@ export function setDatabase(path: string) {
   }
 }
 export function getDatabase(): DatabaseSync {
-
   if (db) {
     return db;
   } else {
     throw new Error("Database has not been initialized");
   }
-
 }
 
 function initializeDatabase(database: DatabaseSync) {
   database.exec(`
-     PRAGMA foreign_keys = ON;
+    PRAGMA foreign_keys = ON;
 
     CREATE TABLE IF NOT EXISTS courses (
       id TEXT PRIMARY KEY,
@@ -43,13 +47,11 @@ function initializeDatabase(database: DatabaseSync) {
       year INTEGER
     );
 
-
     CREATE TABLE IF NOT EXISTS notes (
       id TEXT PRIMARY KEY,
       course TEXT NOT NULL,
       name TEXT NOT NULL,
       created_at TEXT NOT NULL,
-
       FOREIGN KEY (course)
         REFERENCES courses(id)
         ON DELETE CASCADE
@@ -60,8 +62,46 @@ function initializeDatabase(database: DatabaseSync) {
       value TEXT
     );
   `);
-}
 
+  const existingCourse = database
+    .prepare("SELECT id FROM courses WHERE name = ?")
+    .get("Note Rapide");
+
+  if (!existingCourse) {
+    database
+      .prepare(
+        `
+        INSERT INTO courses (
+          id,
+          name,
+          code,
+          professor,
+          cfu,
+          semester,
+          notes_count,
+          description,
+          color,
+          recent,
+          year
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      )
+      .run(
+        "quick-notes",
+        "Note Rapide",
+        "",
+        "",
+        0,
+        1,
+        0,
+        "Questo è il tuo spazio personale per creare e organizzare rapidamente appunti che non appartengono a un corso specifico.",
+        "#6366f1",
+        0,
+        1,
+      );
+  }
+}
 /**
  * =========================
  * COURSES
@@ -95,11 +135,11 @@ export function insertCourse(course: Course) {
     course.professor,
     course.cfu,
     course.semester,
-    course.notesCount,
+    course.notes_count,
     course.description,
     course.color,
     course.recent ? 1 : 0,
-    course.year
+    course.year,
   );
 
   return course;
@@ -108,9 +148,23 @@ export function insertCourse(course: Course) {
 export function selectCourses() {
   const database = getDatabase();
 
-  return database
-    .prepare("SELECT * FROM courses")
-    .all();
+  return database.prepare("SELECT * FROM courses").all();
+}
+
+export function updateCourseColor(courseId: string, color: string) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    UPDATE courses
+    SET color = ?
+    WHERE id = ?
+  `);
+
+  const result = stmt.run(color, courseId);
+  return {
+    success: result.changes > 0,
+    changes: result.changes,
+  };
 }
 
 export function updateRecent(courseId: string, newRecent: boolean) {
@@ -127,7 +181,24 @@ export function updateRecent(courseId: string, newRecent: boolean) {
     success: result.changes > 0,
     changes: result.changes,
   };
-  return
+}
+
+//1 fa +1 0 fa -1
+export function updateNoteCount(courseId: string, count: number) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    UPDATE courses
+    SET notes_count = MAX(notes_count + ?, 0)
+    WHERE id = ?
+  `);
+
+  const result = stmt.run(count === 1 ? 1 : -1, courseId);
+
+  return {
+    success: result.changes > 0,
+    changes: result.changes,
+  };
 }
 
 export function delateCourseDB(courseId: string) {
@@ -135,10 +206,46 @@ export function delateCourseDB(courseId: string) {
 
   const stmt = database.prepare(`   
      DELETE FROM courses
-    WHERE id = ?`)
+    WHERE id = ?`);
   const result = stmt.run(courseId);
 
   return result;
+}
+
+export function updateCourse( courseId: string,course: {
+    name: string;
+    professor: string;
+    description: string;
+    year: number;
+    semester: number;
+  },
+) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    UPDATE courses
+    SET
+      name = ?,
+      professor = ?,
+      description = ?,
+      year = ?,
+      semester = ?
+    WHERE id = ?
+  `);
+
+  const result = stmt.run(
+    course.name,
+    course.professor,
+    course.description,
+    course.year,
+    course.semester,
+    courseId,
+  );
+
+  return {
+    success: result.changes > 0,
+    changes: result.changes,
+  };
 }
 
 /**
@@ -160,23 +267,15 @@ export function insertNotes(note: Note) {
     VALUES (?, ?, ?, ?)
   `);
 
-  stmt.run(
-    note.id,
-    note.course,
-    note.name,
-    note.data.toISOString()
-  );
+  stmt.run(note.id, note.course, note.name, note.data.toISOString());
 
   return note;
-
 }
 
 export function selectNotes() {
   const database = getDatabase();
 
-  return database
-    .prepare("SELECT * FROM notes")
-    .all();
+  return database.prepare("SELECT * FROM notes").all();
 }
 
 export function delateNotes(name: string) {
@@ -203,4 +302,3 @@ export function renameNotes(oldName: string, newName: string) {
 
   return stmt.run(newName, oldName);
 }
-
