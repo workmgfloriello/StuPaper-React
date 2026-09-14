@@ -1,6 +1,12 @@
+"use client";
+
 import { Course } from "@/interface/interface";
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useFiles } from "@/lib/context/NotesContext";
+import {
+  useTheme,
+  type PaletteColor,
+} from "@/lib/context/ThemeContext";
 
 import {
   BookOpen,
@@ -12,21 +18,63 @@ import {
   ArrowLeft,
   NotebookPen,
 } from "lucide-react";
-import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 import DelateAlert from "./DelateAlert";
 import UpdateCourseAlert from "./UpdateCourseAlert";
 
-export function HomepageInfoCourse({ course }: { course: Course }) {
+export function HomepageInfoCourse({
+  course,
+}: {
+  course: Course;
+}) {
   const navigate = useNavigate();
+
   const [showDelateAlert, setShowDelateAlert] = useState(false);
   const [showUpdteAlert, setShowUpdateAlert] = useState(false);
 
-  const { delateCourse, updateColor, updateCourse } = useCourses();
+  const {
+    delateCourse,
+    updateColor,
+    updateCourse,
+  } = useCourses();
+
   const { removeFilesByCourse } = useFiles();
 
+  const { palette } = useTheme();
+
   const isQuickNotes = course.id === "quick-notes";
+
+  /*
+   * Palette globale.
+   * Il corso salva solo la chiave:
+   * "color1", "color2", ..., "color12"
+   */
+  const paletteColors: PaletteColor[] = [
+    "color1",
+    "color2",
+    "color3",
+    "color4",
+    "color5",
+    "color6",
+    "color7",
+    "color8",
+    "color9",
+    "color10",
+    "color11",
+    "color12",
+  ];
+
+  /*
+   * Colore reale del corso.
+   * course.color viene salvato come stringa, quindi bisogna validarlo
+   * prima di usarlo come chiave del palette.
+   */
+  const courseColor =
+    palette[(course.color as PaletteColor) ?? "color1"] ??
+    palette.color1;
 
   const handleDelateClick = () => {
     setShowDelateAlert(true);
@@ -43,11 +91,18 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
     }
   };
 
-  const handleColorChange = async (e: any) => {
-    const newColor = e.currentTarget.id;
-    const courseId = e.currentTarget.dataset.ref;
+  const handleColorChange = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    const newColor = e.currentTarget.dataset.color as PaletteColor;
 
-    const result = await updateColor(courseId, newColor);
+    if (!newColor) return;
+
+    const result = await updateColor(
+      course.id,
+      newColor
+    );
+
     console.log(result);
   };
 
@@ -59,17 +114,23 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
     setShowUpdateAlert(true);
   };
 
-  const handleUpdateConfirm = async (data: any) =>{
-    const result = await updateCourse(course.id,data);
+  const handleUpdateConfirm = async (data: any) => {
+    const result = await updateCourse(
+      course.id,
+      data
+    );
 
-     if (result?.changes > 0) {
-      navigate(`/corsi/${encodeURIComponent(course.id)}`);
+    if (result?.changes > 0) {
+      navigate(
+        `/corsi/${encodeURIComponent(course.id)}`
+      );
     }
-  }
-  
+  };
+
   return (
     <div className="min-h-full w-full overflow-y-auto bg-gray-50 p-6 text-gray-900 transition-colors dark:bg-[#181818] dark:text-[#cccccc]">
       <div className="mx-auto max-w-5xl">
+
         {/* Torna ai corsi */}
         <button
           type="button"
@@ -82,16 +143,23 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
         {/* Header corso */}
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-[#303030] dark:bg-[#252526] dark:shadow-none">
+
           <div className="flex flex-col gap-6 border-b border-gray-200 p-6 sm:flex-row sm:items-center sm:justify-between dark:border-[#303030]">
+
             <div className="flex items-center gap-4">
+
+              {/* Colore corso */}
               <div
                 className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl text-xl font-bold text-white"
-                style={{ backgroundColor: course.color }}
+                style={{
+                  backgroundColor: courseColor,
+                }}
               >
                 {isQuickNotes ? "NR" : course.code}
               </div>
 
               <div className="min-w-0">
+
                 <div className="flex items-center gap-2">
                   {isQuickNotes ? (
                     <NotebookPen className="h-5 w-5 shrink-0 text-indigo-600 dark:text-[#4daafc]" />
@@ -100,7 +168,9 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
                   )}
 
                   <span className="text-sm font-medium text-gray-500 dark:text-[#9d9d9d]">
-                    {isQuickNotes ? "Spazio personale" : "Corso universitario"}
+                    {isQuickNotes
+                      ? "Spazio personale"
+                      : "Corso universitario"}
                   </span>
                 </div>
 
@@ -114,14 +184,14 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
                   </p>
                 ) : (
                   <p className="mt-1 text-sm text-gray-500 dark:text-[#9d9d9d]">
-                    {course.code} · {course.year}° Anno | {course.semester}°
-                    Semestre
+                    {course.code} · {course.year}° Anno |{" "}
+                    {course.semester}° Semestre
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Modifica corso solo per i corsi normali */}
+            {/* Modifica corso */}
             {!isQuickNotes && (
               <button
                 onClick={handleUpdateClick}
@@ -136,6 +206,7 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
           {/* Informazioni principali */}
           <div className="grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0 dark:divide-[#303030]">
+
             {/* Professore / Tipo */}
             <div className="flex items-center gap-3 p-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 dark:bg-[#264f78]">
@@ -144,11 +215,15 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
               <div>
                 <p className="text-xs text-gray-500 dark:text-[#9d9d9d]">
-                  {isQuickNotes ? "Tipo" : "Professore"}
+                  {isQuickNotes
+                    ? "Tipo"
+                    : "Professore"}
                 </p>
 
                 <p className="mt-0.5 text-sm font-semibold text-gray-900 dark:text-[#cccccc]">
-                  {isQuickNotes ? "Note personali" : course.professor}
+                  {isQuickNotes
+                    ? "Note personali"
+                    : course.professor}
                 </p>
               </div>
             </div>
@@ -161,11 +236,15 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
               <div>
                 <p className="text-xs text-gray-500 dark:text-[#9d9d9d]">
-                  {isQuickNotes ? "Utilizzo" : "Crediti formativi"}
+                  {isQuickNotes
+                    ? "Utilizzo"
+                    : "Crediti formativi"}
                 </p>
 
                 <p className="mt-0.5 text-sm font-semibold text-gray-900 dark:text-[#cccccc]">
-                  {isQuickNotes ? "Personale" : `${course.cfu} CFU`}
+                  {isQuickNotes
+                    ? "Personale"
+                    : `${course.cfu} CFU`}
                 </p>
               </div>
             </div>
@@ -178,7 +257,9 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
               <div>
                 <p className="text-xs text-gray-500 dark:text-[#9d9d9d]">
-                  {isQuickNotes ? "Categoria" : "Semestre"}
+                  {isQuickNotes
+                    ? "Categoria"
+                    : "Semestre"}
                 </p>
 
                 <p className="mt-0.5 text-sm font-semibold text-gray-900 dark:text-[#cccccc]">
@@ -193,14 +274,18 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
         {/* Contenuto */}
         <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
+
           {/* Informazioni corso */}
           <div className="lg:col-span-2">
             <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-[#303030] dark:bg-[#252526]">
+
               <div className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-indigo-600 dark:text-[#4daafc]" />
 
                 <h2 className="font-semibold text-gray-900 dark:text-[#cccccc]">
-                  {isQuickNotes ? "Informazioni" : "Informazioni sul corso"}
+                  {isQuickNotes
+                    ? "Informazioni"
+                    : "Informazioni sul corso"}
                 </h2>
               </div>
 
@@ -213,42 +298,37 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
                 </p>
               </div>
 
-              {/* Colore solo corsi normali */}
+              {/* Colore corso */}
               {!isQuickNotes && (
                 <div className="mt-6 border-t border-gray-100 pt-5 dark:border-[#303030]">
+
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-[#cccccc]">
                     Colore corso
                   </h3>
 
                   <div className="mt-4 flex flex-wrap items-center gap-3">
-                    {[
-                      "#6366f1", // Indaco
-                      "#3b82f6", // Blu
-                      "#06b6d4", // Ciano
-                      "#10b981", // Verde
-                      "#84cc16", // Lime
-                      "#eab308", // Giallo
-                      "#f59e0b", // Ambra
-                      "#f97316", // Arancio
-                      "#ef4444", // Rosso
-                      "#ec4899", // Rosa
-                      "#a855f7", // Viola
-                      "#64748b", // Ardesia
-                    ].map((color) => (
-                      <button
-                        key={color}
-                        type="button"
-                        id={color}
-                        data-ref={course.id}
-                        className={`h-10 w-10 rounded-lg border-2 border-white shadow-sm transition hover:scale-110 dark:border-[#252526] ${
-                          course.color === color
-                            ? "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#252526]"
-                            : ""
-                        }`}
-                        style={{ backgroundColor: color }}
-                        onClick={handleColorChange}
-                      />
-                    ))}
+                    {paletteColors.map((color) => {
+                      const selected =
+                        course.color === color;
+
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          data-color={color}
+                          className={`h-10 w-10 rounded-lg border-2 border-white shadow-sm transition hover:scale-110 dark:border-[#252526] ${
+                            selected
+                              ? "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#252526]"
+                              : ""
+                          }`}
+                          style={{
+                            backgroundColor: palette[color],
+                          }}
+                          onClick={handleColorChange}
+                          aria-label={`Seleziona ${color}`}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -257,6 +337,7 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
           {/* Appunti */}
           <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-[#303030] dark:bg-[#252526]">
+
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-indigo-600 dark:text-[#4daafc]" />
 
@@ -264,6 +345,7 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
                 I tuoi appunti
               </h2>
             </div>
+
             <div className="mt-6">
               <p className="text-4xl font-bold text-gray-900 dark:text-[#cccccc]">
                 {course.notes_count}
@@ -291,10 +373,13 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
 
         {/* ID corso */}
         <div className="mt-5 rounded-xl border border-gray-200 bg-white p-6 dark:border-[#303030] dark:bg-[#252526]">
+
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-semibold text-gray-900 dark:text-[#cccccc]">
-                {isQuickNotes ? "ID spazio" : "ID corso"}
+                {isQuickNotes
+                  ? "ID spazio"
+                  : "ID corso"}
               </h2>
 
               <p className="mt-1 text-sm text-gray-500 dark:text-[#9d9d9d]">
@@ -310,9 +395,10 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
           </div>
         </div>
 
-        {/* Zona pericolosa solo corsi normali */}
+        {/* Zona pericolosa */}
         {!isQuickNotes && (
           <div className="mt-5 rounded-xl border border-red-200 bg-white p-6 dark:border-[#5a2a2a] dark:bg-[#252526]">
+
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="font-semibold text-red-600 dark:text-[#f48771]">
@@ -335,6 +421,8 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
           </div>
         )}
       </div>
+
+      {/* Delete Alert */}
       {showDelateAlert && (
         <DelateAlert
           open={showDelateAlert}
@@ -344,13 +432,14 @@ export function HomepageInfoCourse({ course }: { course: Course }) {
         />
       )}
 
+      {/* Update Alert */}
       {showUpdteAlert && (
         <UpdateCourseAlert
           open={showUpdteAlert}
           course={course}
           onClose={() => setShowUpdateAlert(false)}
           onConfirm={async (data) => {
-            handleUpdateConfirm(data);
+            await handleUpdateConfirm(data);
             setShowUpdateAlert(false);
           }}
         />

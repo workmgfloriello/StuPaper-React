@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { insertUser, selectUser } from "../../database/ManageDatabase.ts";
+import { insertUser, selectUser, updateUser } from "../../database/ManageDatabase.ts";
 import type { User } from "../../src/interface/interface";
 
 export function registerUserHandlers() {
@@ -12,4 +12,9 @@ export function registerUserHandlers() {
   ipcMain.handle("user:select", async () => {
     return selectUser();
   });
+
+  //update user
+  ipcMain.handle("user:update", async (_event, user:User) =>{
+    return updateUser(user)
+  })
 }

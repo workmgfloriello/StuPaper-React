@@ -47,5 +47,6 @@ export type ElectronApi = {
 
   //User
   insertUser?: (user:User) => any
-  selectUser?: () => any
+  selectUser?: () => any,
+  updateUser?: (user: User) => any;
 }

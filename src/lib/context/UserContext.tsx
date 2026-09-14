@@ -14,6 +14,7 @@ interface UserContextType {
   loading: boolean;
   insertUser: (user: User) => Promise<void>;
   selectUsers: () => any;
+  updateUser: (user: User) => any;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -58,6 +59,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return selectedUser;
   }
 
+  async function updateUser(newUser: User) {
+    const result = await UserManager.updatUser(newUser)
+
+    if (result?.success) {
+      setUser(newUser);
+    }
+
+    return result;
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -65,6 +76,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         loading,
         insertUser,
         selectUsers,
+        updateUser
       }}
     >
       {children}

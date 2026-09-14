@@ -1,24 +1,46 @@
 "use client";
+
 import { useCourses } from "@/lib/context/CoursesContext";
 import { useFiles } from "@/lib/context/NotesContext.tsx";
+import { useTheme } from "@/lib/context/ThemeContext";
 import { Circle, NotebookPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function notes() {
+export default function Notes() {
   const { courses } = useCourses();
   const { files } = useFiles();
-  const navigator = useNavigate()
+  const { palette } = useTheme();
+  const navigate = useNavigate();
 
-  const handleNoteClick = (e:any) =>{
+  const handleNoteClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const name = e.currentTarget.dataset.ref;
-    navigator(`/editor/${encodeURIComponent(name)}`)
-  }
+
+    if (!name) return;
+
+    navigate(`/editor/${encodeURIComponent(name)}`);
+  };
+
+  // Ultime 10 note più recenti
+  const recentNotes = [...files]
+    .sort((a, b) => {
+      const dateA = a.created_at
+        ? new Date(a.created_at).getTime()
+        : 0;
+
+      const dateB = b.created_at
+        ? new Date(b.created_at).getTime()
+        : 0;
+
+      return dateB - dateA;
+    })
+    .slice(0, 10);
 
   return (
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-300 bg-white transition-colors dark:border-[#303030] dark:bg-[#252526]">
       {/* Header */}
       <div className="flex shrink-0 items-center gap-2 px-8 py-5">
         <NotebookPen className="h-5 w-5 text-indigo-600 dark:text-[#4daafc]" />
+
         <h2 className="font-semibold text-gray-900 dark:text-[#cccccc]">
           Ultimi appunti
         </h2>
@@ -26,25 +48,27 @@ export default function notes() {
 
       {/* Lista scrollabile */}
       <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto divide-y divide-gray-100 dark:divide-[#303030]">
-        {files.map((note) => {
-          let color = "";
-          let courseName = "";
+        {recentNotes.map((note) => {
+          const findCourse = courses.find(
+            (course) => course.id === note.course
+          );
 
-          const findCourse = courses.find((course) => course.id == note.course);
+          const courseName = findCourse?.name ?? "Nessun Corso";
 
-          if (findCourse) {
-            color = findCourse.color;
-            courseName = findCourse.name;
-          } else {
-            color = "#6366f1";
-            courseName = "Nessun Corso";
-          }
+          const colorKey =
+            findCourse?.color as keyof typeof palette | undefined;
+
+          const color =
+            colorKey && colorKey in palette
+              ? palette[colorKey]
+              : palette.color1;
+
           return (
             <div
               key={note.id}
-              data-ref = {note.name}
-              onClick={(e)=>handleNoteClick(e)}
-              className="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-[#2a2d2e]"
+              data-ref={note.name}
+              onClick={handleNoteClick}
+              className="flex cursor-pointer items-center gap-4 px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-[#2a2d2e]"
             >
               <div
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
@@ -58,7 +82,7 @@ export default function notes() {
               </p>
 
               <span
-                className="hidden rounded-md px-2 py-1 text-sm text-gray-800 font-bold sm:block dark:text-white"
+                className="hidden rounded-md px-2 py-1 text-sm font-bold text-gray-800 sm:block dark:text-white"
                 style={{ backgroundColor: color }}
               >
                 {courseName}
@@ -80,3 +104,4 @@ export default function notes() {
     </div>
   );
 }
+

@@ -8,6 +8,10 @@ class CustomUserManager {
   async selectUser() {
     return await window.electronAPI?.selectUser?.();
   }
+
+  async updatUser(user: User){
+    return await window.electronAPI?.updateUser?.(user);
+  }
 }
 
 const UserManager = new CustomUserManager();

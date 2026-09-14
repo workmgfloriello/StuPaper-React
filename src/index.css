@@ -5,7 +5,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @media print {
- @page {
+  @page {
     size: A4;
     margin: 10mm;
   }
@@ -71,6 +71,7 @@
   --border: #e4e4e7;
   --muted: #71717a;
 }
+
 .dark {
   --background: #181818;
   --foreground: #cccccc;
@@ -79,6 +80,7 @@
   --border: #303030;
   --muted: #9d9d9d;
 }
+
 body {
   font-family: var(--font-jakarta);
 }
@@ -196,10 +198,10 @@ body {
   background: #f9fafb;
 }
 
-.tiptap ul[data-type="taskList"] > li {
+.tiptap ul[data-type="taskList"]>li {
   display: flex;
   flex-direction: row;
-  align-items:center;
+  align-items: center;
   gap: 0.5rem;
   margin: 0.25rem 0;
 }
@@ -280,7 +282,7 @@ body {
 
 .calendar-dashboard .fc-col-header-cell-cushion {
   padding: 2px 0 !important;
-  font-size:15px !important;
+  font-size: 15px !important;
 }
 
 .calendar-dashboard .fc-daygrid-day-number {
@@ -326,6 +328,161 @@ body {
   background: transparent;
 }
 
+/* =========================================
+   FULLCALENDAR
+========================================= */
+
+.fc {
+  --fc-border-color: #e2e8f0;
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: #f8fafc;
+  --fc-list-event-hover-bg-color: #f8fafc;
+  --fc-today-bg-color: rgba(99, 102, 241, 0.08);
+}
+
+/* DARK MODE */
+
+.dark .fc {
+  --fc-border-color: #1e293b;
+  --fc-page-bg-color: #0f172a;
+  --fc-neutral-bg-color: #1e293b;
+  --fc-list-event-hover-bg-color: #1e293b;
+  --fc-today-bg-color: rgba(99, 102, 241, 0.12);
+}
+
+/* TOOLBAR */
+
+.fc .fc-toolbar-title {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dark .fc .fc-toolbar-title {
+  color: #f8fafc;
+}
+
+/* BUTTONS */
+
+.fc .fc-button {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+  box-shadow: none !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dark .fc .fc-button {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+.fc .fc-button:hover,
+.fc .fc-button-active {
+  background: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  color: white !important;
+}
+
+/* HEADER GIORNI */
+
+.fc .fc-col-header-cell {
+  background: #f8fafc;
+}
+
+.dark .fc .fc-col-header-cell {
+  background: #1e293b;
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: #64748b;
+  padding: 10px 5px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dark .fc .fc-col-header-cell-cushion {
+  color: #94a3b8;
+}
+
+/* NUMERI GIORNI */
+
+.fc .fc-daygrid-day-number {
+  color: #334155;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.dark .fc .fc-daygrid-day-number {
+  color: #e2e8f0;
+}
+
+/* EVENTI */
+
+.fc .fc-event {
+  border: none;
+  border-radius: 6px;
+  background: #6366f1;
+  padding: 2px 5px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fc .fc-event:hover {
+  background: #4f46e5;
+}
+
+/* CALENDARIO */
+
+.fc .fc-scrollgrid {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* OGGI */
+
+.fc .fc-daygrid-day.fc-day-today {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.dark .fc .fc-daygrid-day.fc-day-today {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+/* TIME GRID */
+
+.fc .fc-timegrid-slot-label {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.dark .fc .fc-timegrid-slot-label {
+  color: #64748b;
+}
+
+/* LIST */
+
+.fc .fc-list-day-cushion {
+  background: #f8fafc;
+}
+
+.dark .fc .fc-list-day-cushion {
+  background: #1e293b;
+}
+
+.fc .fc-list-event-title,
+.fc .fc-list-event-time {
+  color: #334155;
+}
+
+.dark .fc .fc-list-event-title,
+.dark .fc .fc-list-event-time {
+  color: #e2e8f0;
+}
+
 .dark * {
   scrollbar-color: #4a4a4a transparent;
 }
@@ -347,4 +504,5 @@ body {
 .dark *::-webkit-scrollbar-corner {
   background: transparent;
 }
+
 /* NON toccare gli span di Lowlight */

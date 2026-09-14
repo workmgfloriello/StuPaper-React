@@ -1,5 +1,5 @@
 import CalendarDashboard from "./GrideComponents/CalendarDashboard";
-import Deadlines from "./GrideComponents/Deadlines";
+import { InfoComponent } from "./GrideComponents/InfoComponent";
 import LastNotes from "./GrideComponents/LastNotes";
 import RecentCourses from "./GrideComponents/RecentCourses";
 import Welcome from "./Welcome";
@@ -19,7 +19,7 @@ export default function GrideBase() {
 
       {/* Scadenze */}
       <div className="min-h-0 min-w-0 lg:col-span-1">
-        <Deadlines />
+        <InfoComponent />
       </div>
 
       {/* Calendario */}

@@ -102,7 +102,7 @@ function initializeDatabase(database: DatabaseSync) {
         1,
         0,
         "Questo è il tuo spazio personale per creare e organizzare rapidamente appunti che non appartengono a un corso specifico.",
-        "#6366f1",
+        "color1",
         0,
         1,
       );
@@ -351,4 +351,27 @@ export function selectUser() {
       )
       .get() ?? null
   );
+}
+
+export function updateUser(user: User) {
+  const database = getDatabase();
+  
+  const stmt = database.prepare(`
+    UPDATE user
+    SET
+      name = ?,
+      school = ?,
+      type = ?
+  `);
+
+  const result = stmt.run(
+    user.name,
+    user.school,
+    user.type,
+  );
+
+  return {
+    success: result.changes > 0,
+    changes: result.changes,
+  };
 }

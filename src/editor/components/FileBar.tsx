@@ -113,7 +113,7 @@ export default function FileBar({ editor, fileMeta }: FileBarProps) {
 
     if (result?.success) {
       updateNoteCount(fileMeta.course, 0);
-      navigate("/appunti");
+      navigate("/appunti/all");
     }
   }
 

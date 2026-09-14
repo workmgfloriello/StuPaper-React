@@ -26,5 +26,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   //user
   insertUser: (user) => ipcRenderer.invoke("user:create",user),
-  selectUser: () => ipcRenderer.invoke("user:select")
+  selectUser: () => ipcRenderer.invoke("user:select"),
+  updateUser: (user) => ipcRenderer.invoke("user:update",user)
 });

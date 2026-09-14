@@ -1,13 +1,44 @@
 "use client";
+
 import { Course } from "@/interface/interface.tsx";
+
 import { useCourses } from "@/lib/context/CoursesContext";
+import {
+  useTheme,
+  type PaletteColor,
+} from "@/lib/context/ThemeContext";
+
 import { generateUUID } from "@/lib/utils/uuid";
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const paletteColors: PaletteColor[] = [
+  "color1",
+  "color2",
+  "color3",
+  "color4",
+  "color5",
+  "color6",
+  "color7",
+  "color8",
+  "color9",
+  "color10",
+  "color11",
+  "color12",
+];
+
 export default function HomepageCourses() {
-  const { courses, setCourses, updateRecent } = useCourses();
+  const {
+    courses,
+    setCourses,
+    updateRecent,
+  } = useCourses();
+
+  const { palette } = useTheme();
+
   const [showForm, setShowForm] = useState(false);
+
   const [formData, setFormData] = useState<Course>({
     id: "",
     name: "",
@@ -19,13 +50,22 @@ export default function HomepageCourses() {
     description: "",
     year: 1,
     recent: false,
-    color: "#6366f1",
+
+    // Primo colore della palette
+    color: "color1",
   });
+
   const navigator = useNavigate();
+
+  /* =========================
+     FORM CHANGE
+  ========================= */
 
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      HTMLInputElement |
+      HTMLTextAreaElement |
+      HTMLSelectElement
     >,
   ) => {
     const { name, value } = e.target;
@@ -33,47 +73,71 @@ export default function HomepageCourses() {
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "cfu" || name === "semester" || name === "year"
+        name === "cfu" ||
+        name === "semester" ||
+        name === "year"
           ? Number(value)
           : value,
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /* =========================
+     CREATE COURSE
+  ========================= */
 
-    console.log("SEMESTER FORM:", formData.semester);
-    console.log("YEAR FORM:", formData.year);
+  const handleSubmit = async (
+    e: React.FormEvent,
+  ) => {
+    e.preventDefault();
 
     const newCourse: Course = {
       id: generateUUID().toString(),
+
       name: formData.name,
       code: formData.code,
       professor: formData.professor,
+
       cfu: Number(formData.cfu),
       semester: Number(formData.semester),
+
       notes_count: 0,
+
       description: formData.description,
-      color: formData.color,
-      recent: false,
+
       year: Number(formData.year),
+
+      recent: false,
+
+      // Salviamo color1/color2/etc.
+      color: formData.color,
     };
 
     console.log("NUOVO CORSO:", newCourse);
 
     try {
-      const dbInsert = await (window.electronAPI as any)?.insertCourse(
-        newCourse,
+      const dbInsert =
+        await (window.electronAPI as any)?.insertCourse(
+          newCourse,
+        );
+
+      console.log(
+        "RISPOSTA DATABASE:",
+        dbInsert,
       );
 
-      console.log("RISPOSTA DATABASE:", dbInsert);
-
       if (dbInsert?.success === false) {
-        console.error("Errore inserimento corso:", dbInsert);
+        console.error(
+          "Errore inserimento corso:",
+          dbInsert,
+        );
+
         return;
       }
 
-      setCourses((prev) => [...prev, newCourse]);
+      setCourses((prev) => [
+        ...prev,
+        newCourse,
+      ]);
 
       setFormData({
         id: "",
@@ -86,46 +150,78 @@ export default function HomepageCourses() {
         description: "",
         year: 1,
         recent: false,
-        color: "#6366f1",
+        color: "color1",
       });
 
       setShowForm(false);
     } catch (error) {
-      console.error("Error inserting course:", error);
+      console.error(
+        "Error inserting course:",
+        error,
+      );
     }
   };
 
-  const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+  /* =========================
+     CLICK COURSE
+  ========================= */
+
+  const handleClick = async (
+    e: React.MouseEvent<HTMLDivElement>,
+  ) => {
     const courseId = e.currentTarget.id;
 
-    const clickedCourse = courses.find((course) => course.id === courseId);
+    const clickedCourse = courses.find(
+      (course) => course.id === courseId,
+    );
 
     if (!clickedCourse) return;
 
-    navigator(`/corsi/${clickedCourse.id}`);
+    navigator(
+      `/corsi/${clickedCourse.id}`,
+    );
 
     if (clickedCourse.recent) {
-      console.log("CORSO GIA IMPOSTATO COME RECENTE");
       return;
     }
 
-    const recentCourses = courses.filter((course) => course.recent);
+    const recentCourses = courses.filter(
+      (course) => course.recent,
+    );
 
     if (recentCourses.length < 3) {
-      await updateRecent(courseId, true);
+      await updateRecent(
+        courseId,
+        true,
+      );
+
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * recentCourses.length);
-    const courseToRemove = recentCourses[randomIndex];
+    const randomIndex = Math.floor(
+      Math.random() *
+        recentCourses.length,
+    );
 
-    await updateRecent(courseToRemove.id, false);
-    await updateRecent(courseId, true);
+    const courseToRemove =
+      recentCourses[randomIndex];
+
+    await updateRecent(
+      courseToRemove.id,
+      false,
+    );
+
+    await updateRecent(
+      courseId,
+      true,
+    );
   };
 
   return (
     <div className="min-h-full bg-gray-50 p-6 text-gray-900 transition-colors dark:bg-[#181818] dark:text-[#cccccc]">
-      {/* Header */}
+
+      {/* ================= HEADER ================= */}
+
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-[#cccccc]">
@@ -138,14 +234,19 @@ export default function HomepageCourses() {
         </div>
 
         <button
-          onClick={() => setShowForm(!showForm)}
-          className="rounded-xl bg-indigo-600 px-5 py-3 font-medium text-white transition hover:bg-indigo-700"
+          onClick={() =>
+            setShowForm(!showForm)
+          }
+          className="rounded-xl bg-[var(--color1)] px-5 py-3 font-medium text-white transition hover:opacity-90"
         >
-          {showForm ? "Chiudi" : "+ Nuovo corso"}
+          {showForm
+            ? "Chiudi"
+            : "+ Nuovo corso"}
         </button>
       </div>
 
-      {/* Form */}
+      {/* ================= FORM ================= */}
+
       {showForm && (
         <form
           onSubmit={handleSubmit}
@@ -156,7 +257,9 @@ export default function HomepageCourses() {
           </h2>
 
           <div className="grid gap-5 md:grid-cols-2">
+
             {/* Nome */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Nome corso
@@ -169,11 +272,12 @@ export default function HomepageCourses() {
                 onChange={handleChange}
                 placeholder="Es. Analisi Matematica II"
                 required
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:placeholder:text-[#6e6e6e]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-[var(--color1)] dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:placeholder:text-[#6e6e6e]"
               />
             </div>
 
             {/* Codice */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Codice
@@ -186,11 +290,12 @@ export default function HomepageCourses() {
                 onChange={handleChange}
                 placeholder="Es. AN2"
                 required
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 uppercase text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:placeholder:text-[#6e6e6e]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 uppercase text-gray-900 outline-none transition focus:border-[var(--color1)] dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
               />
             </div>
 
             {/* Professore */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Professore
@@ -203,11 +308,12 @@ export default function HomepageCourses() {
                 onChange={handleChange}
                 placeholder="Es. Mario Rossi"
                 required
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:placeholder:text-[#6e6e6e]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-[var(--color1)] dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
               />
             </div>
 
             {/* CFU */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 CFU
@@ -218,14 +324,14 @@ export default function HomepageCourses() {
                 name="cfu"
                 value={formData.cfu}
                 onChange={handleChange}
-                placeholder="Es. 9"
                 min="1"
                 required
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:placeholder:text-[#6e6e6e]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-[var(--color1)] dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
               />
             </div>
 
             {/* Semestre */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Semestre
@@ -235,14 +341,20 @@ export default function HomepageCourses() {
                 name="semester"
                 value={formData.semester}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
               >
-                <option value="1">1° semestre</option>
-                <option value="2">2° semestre</option>
+                <option value="1">
+                  1° semestre
+                </option>
+
+                <option value="2">
+                  2° semestre
+                </option>
               </select>
             </div>
 
             {/* Anno */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Anno
@@ -252,18 +364,36 @@ export default function HomepageCourses() {
                 name="year"
                 value={formData.year}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
               >
-                <option value="1">1° Anno</option>
-                <option value="2">2° Anno</option>
-                <option value="3">3° Anno</option>
-                <option value="4">4° Anno</option>
-                <option value="5">5° Anno</option>
-                <option value="6">6° Anno</option>
+                <option value="1">
+                  1° Anno
+                </option>
+
+                <option value="2">
+                  2° Anno
+                </option>
+
+                <option value="3">
+                  3° Anno
+                </option>
+
+                <option value="4">
+                  4° Anno
+                </option>
+
+                <option value="5">
+                  5° Anno
+                </option>
+
+                <option value="6">
+                  6° Anno
+                </option>
               </select>
             </div>
 
             {/* Descrizione */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Descrizione
@@ -276,59 +406,60 @@ export default function HomepageCourses() {
                 onChange={handleChange}
                 placeholder="Descrizione del corso"
                 required
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-indigo-500 dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc] dark:placeholder:text-[#6e6e6e]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-[var(--color1)] dark:border-[#3c3c3c] dark:bg-[#1e1e1e] dark:text-[#cccccc]"
               />
             </div>
 
-            {/* Colore */}
+            {/* ================= COLORE ================= */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-[#cccccc]">
                 Colore
               </label>
 
               <div className="grid grid-cols-6 gap-3">
-                {[
-                  "#6366f1", // Indaco
-                  "#3b82f6", // Blu
-                  "#06b6d4", // Ciano
-                  "#10b981", // Verde
-                  "#84cc16", // Lime
-                  "#eab308", // Giallo
-                  "#f59e0b", // Ambra
-                  "#f97316", // Arancio
-                  "#ef4444", // Rosso
-                  "#ec4899", // Rosa
-                  "#a855f7", // Viola
-                  "#64748b", // Ardesia
-                ].map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() =>
-                      handleChange({
-                        target: {
-                          name: "color",
-                          value: color,
-                        },
-                      } as React.ChangeEvent<HTMLInputElement>)
-                    }
-                    className={`h-10 w-10 rounded-xl transition hover:scale-110 ${
-                      formData.color === color
-                        ? "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#252526] dark:ring-indigo-400"
-                        : ""
-                    }`}
-                    style={{ backgroundColor: color }}
-                    aria-label={`Seleziona colore ${color}`}
-                  />
-                ))}
+                {paletteColors.map(
+                  (color) => {
+                    const selected =
+                      formData.color ===
+                      color;
+
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() =>
+                          setFormData(
+                            (prev) => ({
+                              ...prev,
+                              color,
+                            }),
+                          )
+                        }
+                        className={`h-10 w-10 rounded-xl transition hover:scale-110 ${
+                          selected
+                            ? "ring-2 ring-[var(--color1)] ring-offset-2 dark:ring-offset-[#252526]"
+                            : ""
+                        }`}
+                        style={{
+                          backgroundColor:
+                            palette[color],
+                        }}
+                        aria-label={`Seleziona ${color}`}
+                      />
+                    );
+                  },
+                )}
               </div>
             </div>
           </div>
 
+          {/* Submit */}
+
           <div className="mt-6 flex justify-end">
             <button
               type="submit"
-              className="rounded-xl bg-indigo-600 px-6 py-3 font-medium text-white transition hover:bg-indigo-700"
+              className="rounded-xl bg-[var(--color1)] px-6 py-3 font-medium text-white transition hover:opacity-90"
             >
               Crea corso
             </button>
@@ -336,7 +467,8 @@ export default function HomepageCourses() {
         </form>
       )}
 
-      {/* Lista corsi */}
+      {/* ================= COURSES ================= */}
+
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {courses.map((course) => (
           <div
@@ -345,11 +477,16 @@ export default function HomepageCourses() {
             onClick={handleClick}
             className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-[#303030] dark:bg-[#252526] dark:hover:bg-[#2a2d2e]"
           >
+
             {/* Badge */}
+
             <div className="mb-5 flex items-center justify-between">
               <span
                 className="rounded-lg px-3 py-1 text-xs font-semibold text-white"
-                style={{ backgroundColor: course.color }}
+                style={{
+                  backgroundColor:
+                    palette[course.color as PaletteColor],
+                }}
               >
                 {course.name}
               </span>
@@ -362,6 +499,7 @@ export default function HomepageCourses() {
             </div>
 
             {/* Titolo */}
+
             <h2 className="text-xl font-bold text-gray-900 dark:text-[#cccccc]">
               {course.name}
             </h2>
@@ -371,7 +509,9 @@ export default function HomepageCourses() {
             </p>
 
             {/* Info */}
+
             <div className="mt-5 space-y-2 border-t border-gray-100 pt-4 text-sm text-gray-600 dark:border-[#303030] dark:text-[#9d9d9d]">
+
               <div className="flex justify-between">
                 <span>Professore</span>
 
@@ -417,6 +557,7 @@ export default function HomepageCourses() {
       </div>
 
       {/* Nessun corso */}
+
       {courses.length === 0 && (
         <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center transition-colors dark:border-[#3c3c3c] dark:bg-[#252526]">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-[#cccccc]">

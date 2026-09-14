@@ -1,102 +1,113 @@
 import { useState } from "react";
-import { useUser } from "@/lib/context/UserContext";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-type UserType = "studente" | "docente" | "personale";
-type Theme = "system" | "light" | "dark";
-type Palette = "indigo" | "blue" | "violet" | "green" | "orange" | "rose";
+import { useUser } from "@/lib/context/UserContext";
+import {
+  useTheme,
+  type PaletteColor,
+} from "@/lib/context/ThemeContext";
 
-const palettes = [
-  {
-    id: "indigo",
-    name: "Indigo",
-    className: "bg-indigo-600",
-  },
-  {
-    id: "blue",
-    name: "Blu",
-    className: "bg-blue-600",
-  },
-  {
-    id: "violet",
-    name: "Viola",
-    className: "bg-violet-600",
-  },
-  {
-    id: "green",
-    name: "Verde",
-    className: "bg-emerald-600",
-  },
-  {
-    id: "orange",
-    name: "Arancio",
-    className: "bg-orange-500",
-  },
-  {
-    id: "rose",
-    name: "Rosa",
-    className: "bg-rose-500",
-  },
-] as const;
+import type { User } from "@/interface/interface";
+
+type UserType = "studente" | "docente" | "personale";
+
+const paletteColors: PaletteColor[] = [
+  "color1",
+  "color2",
+  "color3",
+  "color4",
+  "color5",
+  "color6",
+  "color7",
+  "color8",
+  "color9",
+  "color10",
+  "color11",
+  "color12",
+];
 
 export default function SettingPage() {
-  const { user } = useUser();
+  const { user, updateUser } = useUser();
 
-  const [name, setName] = useState(user?.name ?? "");
-  const [school, setSchool] = useState(user?.school ?? "");
+  const {
+    theme,
+    palette,
+    setTheme,
+    updatePaletteColor,
+    resetPalette,
+  } = useTheme();
+
+  const navigate = useNavigate();
+
+  const [name, setName] = useState(
+    user?.name ?? "",
+  );
+
+  const [school, setSchool] = useState(
+    user?.school ?? "",
+  );
+
   const [type, setType] = useState<UserType>(
     (user?.type as UserType) ?? "studente",
   );
 
-  const [theme, setTheme] = useState<Theme>("system");
-  const [palette, setPalette] = useState<Palette>("indigo");
+  const [showDeleteConfirm, setShowDeleteConfirm] =
+    useState(false);
 
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  /* =========================
+     PROFILE
+  ========================= */
 
-  const navigate = useNavigate();
+  const handleSaveProfile = async () => {
+    if (!name.trim() || !school.trim()) {
+      return;
+    }
 
-  const handleSaveProfile = () => {
-    console.log("Salvataggio profilo:", {
-      name,
-      school,
+    const newUser: User = {
+      name: name.trim(),
+      school: school.trim(),
       type,
-    });
+    };
 
-    // TODO:
-    // aggiornare il profilo tramite UserContext
-  };
-
-  const handleDeleteProfile = () => {
-    console.log("Eliminazione profilo");
-
-    // TODO:
-    // eliminare utente dal database
+    try {
+      await updateUser(newUser);
+    } catch (error) {
+      console.error(
+        "Errore durante il salvataggio del profilo:",
+        error,
+      );
+    }
   };
 
   return (
     <main className="h-full min-h-0 overflow-y-auto bg-gray-50 dark:bg-[#181818]">
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="mb-5 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#aaaaaa] dark:hover:bg-[#252525] dark:hover:text-[#eeeeee]"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Torna indietro
-      </button>
       <div className="mx-auto w-full max-w-4xl px-6 py-8">
-        {/* Header */}
+
+        {/* ================= HEADER ================= */}
+
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="mb-5 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#aaaaaa] dark:hover:bg-[#252525] dark:hover:text-[#eeeeee]"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Torna indietro
+        </button>
+
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-[#eeeeee]">
             Impostazioni
           </h1>
 
           <p className="mt-1 text-sm text-gray-500 dark:text-[#888888]">
-            Personalizza il tuo profilo e l'aspetto di StuPaper.
+            Personalizza il tuo profilo e l'aspetto di
+            StuPaper.
           </p>
         </div>
 
         <div className="flex flex-col gap-6">
+
           {/* ================= PROFILE ================= */}
 
           <section className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#303030] dark:bg-[#202020]">
@@ -111,7 +122,9 @@ export default function SettingPage() {
             </div>
 
             <div className="flex flex-col gap-5 p-6">
+
               {/* Nome */}
+
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="name"
@@ -124,12 +137,15 @@ export default function SettingPage() {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-11 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-[#383838] dark:bg-[#181818] dark:text-[#eeeeee] dark:focus:border-[#4daafc] dark:focus:ring-[#4daafc]/20"
+                  onChange={(e) =>
+                    setName(e.target.value)
+                  }
+                  className="h-11 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-900 outline-none transition focus:border-[var(--color1)] focus:ring-2 focus:ring-[var(--color1)]/20 dark:border-[#383838] dark:bg-[#181818] dark:text-[#eeeeee]"
                 />
               </div>
 
               {/* Scuola */}
+
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="school"
@@ -142,12 +158,15 @@ export default function SettingPage() {
                   id="school"
                   type="text"
                   value={school}
-                  onChange={(e) => setSchool(e.target.value)}
-                  className="h-11 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-[#383838] dark:bg-[#181818] dark:text-[#eeeeee] dark:focus:border-[#4daafc] dark:focus:ring-[#4daafc]/20"
+                  onChange={(e) =>
+                    setSchool(e.target.value)
+                  }
+                  className="h-11 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-900 outline-none transition focus:border-[var(--color1)] focus:ring-2 focus:ring-[var(--color1)]/20 dark:border-[#383838] dark:bg-[#181818] dark:text-[#eeeeee]"
                 />
               </div>
 
               {/* Tipo */}
+
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="type"
@@ -159,21 +178,34 @@ export default function SettingPage() {
                 <select
                   id="type"
                   value={type}
-                  onChange={(e) => setType(e.target.value as UserType)}
-                  className="h-11 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-[#383838] dark:bg-[#181818] dark:text-[#eeeeee] dark:focus:border-[#4daafc] dark:focus:ring-[#4daafc]/20"
+                  onChange={(e) =>
+                    setType(
+                      e.target.value as UserType,
+                    )
+                  }
+                  className="h-11 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-900 outline-none transition focus:border-[var(--color1)] focus:ring-2 focus:ring-[var(--color1)]/20 dark:border-[#383838] dark:bg-[#181818] dark:text-[#eeeeee]"
                 >
-                  <option value="studente">Studente</option>
-                  <option value="docente">Docente</option>
-                  <option value="personale">Personale</option>
+                  <option value="studente">
+                    Studente
+                  </option>
+
+                  <option value="docente">
+                    Docente
+                  </option>
+
+                  <option value="personale">
+                    Personale
+                  </option>
                 </select>
               </div>
 
               {/* Salva */}
+
               <div className="flex justify-end pt-2">
                 <button
                   type="button"
                   onClick={handleSaveProfile}
-                  className="h-10 rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700 dark:bg-[#4daafc] dark:text-[#111111] dark:hover:bg-[#3b9de8]"
+                  className="h-10 rounded-lg bg-[var(--color1)] px-5 text-sm font-semibold text-white transition hover:opacity-90"
                 >
                   Salva modifiche
                 </button>
@@ -194,44 +226,25 @@ export default function SettingPage() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-7 p-6">
-              {/* Tema */}
+            <div className="flex flex-col gap-8 p-6">
+
+              {/* ================= THEME ================= */}
+
               <div>
                 <h3 className="text-sm font-medium text-gray-800 dark:text-[#dddddd]">
                   Tema
                 </h3>
 
-                <div className="mt-3 grid grid-cols-3 gap-3">
-                  {/* Sistema */}
-                  <button
-                    type="button"
-                    onClick={() => setTheme("system")}
-                    className={`rounded-xl border p-4 text-left transition ${
-                      theme === "system"
-                        ? "border-indigo-500 bg-indigo-50 dark:border-[#4daafc] dark:bg-[#1d2935]"
-                        : "border-gray-200 hover:bg-gray-50 dark:border-[#383838] dark:hover:bg-[#181818]"
-                    }`}
-                  >
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-gray-200 text-gray-700 dark:bg-[#303030] dark:text-gray-300">
-                      ◐
-                    </div>
-
-                    <p className="text-sm font-medium text-gray-900 dark:text-[#eeeeee]">
-                      Sistema
-                    </p>
-
-                    <p className="mt-1 text-xs text-gray-500 dark:text-[#777777]">
-                      Segue il sistema
-                    </p>
-                  </button>
+                <div className="mt-3 grid grid-cols-2 gap-3">
 
                   {/* Chiaro */}
+
                   <button
                     type="button"
                     onClick={() => setTheme("light")}
                     className={`rounded-xl border p-4 text-left transition ${
                       theme === "light"
-                        ? "border-indigo-500 bg-indigo-50 dark:border-[#4daafc] dark:bg-[#1d2935]"
+                        ? "border-[var(--color1)] bg-[var(--color1)]/10"
                         : "border-gray-200 hover:bg-gray-50 dark:border-[#383838] dark:hover:bg-[#181818]"
                     }`}
                   >
@@ -249,12 +262,13 @@ export default function SettingPage() {
                   </button>
 
                   {/* Scuro */}
+
                   <button
                     type="button"
                     onClick={() => setTheme("dark")}
                     className={`rounded-xl border p-4 text-left transition ${
                       theme === "dark"
-                        ? "border-indigo-500 bg-indigo-50 dark:border-[#4daafc] dark:bg-[#1d2935]"
+                        ? "border-[var(--color1)] bg-[var(--color1)]/10"
                         : "border-gray-200 hover:bg-gray-50 dark:border-[#383838] dark:hover:bg-[#181818]"
                     }`}
                   >
@@ -273,72 +287,70 @@ export default function SettingPage() {
                 </div>
               </div>
 
-              {/* Palette */}
+              {/* ================= PALETTE ================= */}
+
               <div>
-                <h3 className="text-sm font-medium text-gray-800 dark:text-[#dddddd]">
-                  Colore principale
-                </h3>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-800 dark:text-[#dddddd]">
+                      Palette
+                    </h3>
 
-                <p className="mt-1 text-xs text-gray-500 dark:text-[#777777]">
-                  Scegli il colore principale dell'interfaccia.
-                </p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-[#777777]">
+                      Personalizza i 12 colori utilizzati
+                      in tutta StuPaper.
+                    </p>
+                  </div>
 
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {palettes.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setPalette(item.id as Palette)}
-                      title={item.name}
-                      className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
-                        palette === item.id
-                          ? "ring-2 ring-gray-900 ring-offset-2 dark:ring-white dark:ring-offset-[#202020]"
-                          : ""
-                      }`}
+                  <button
+                    type="button"
+                    onClick={resetPalette}
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#383838] dark:text-[#aaaaaa] dark:hover:bg-[#181818]"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Ripristina
+                  </button>
+                </div>
+
+                {/* Colors */}
+
+                <div className="mt-5 grid grid-cols-4 gap-4 sm:grid-cols-6">
+                  {paletteColors.map((color, index) => (
+                    <label
+                      key={color}
+                      className="group flex cursor-pointer flex-col items-center gap-2"
                     >
-                      <span
-                        className={`h-8 w-8 rounded-full ${item.className}`}
-                      />
-                    </button>
+                      <div
+                        className="relative h-12 w-12 overflow-hidden rounded-xl border border-gray-200 shadow-sm transition group-hover:scale-105 dark:border-[#383838]"
+                        style={{
+                          backgroundColor:
+                            palette[color],
+                        }}
+                      >
+                        <input
+                          type="color"
+                          value={palette[color]}
+                          onChange={(e) =>
+                            updatePaletteColor(
+                              color,
+                              e.target.value,
+                            )
+                          }
+                          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        />
+                      </div>
+
+                      <span className="text-[10px] font-medium text-gray-500 dark:text-[#777777]">
+                        Colore {index + 1}
+                      </span>
+
+                      <span className="font-mono text-[9px] uppercase text-gray-400 dark:text-[#666666]">
+                        {palette[color]}
+                      </span>
+                    </label>
                   ))}
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* ================= DANGER ZONE ================= */}
-
-          <section className="rounded-2xl border border-red-200 bg-white shadow-sm dark:border-red-900/40 dark:bg-[#202020]">
-            <div className="border-b border-red-100 px-6 py-5 dark:border-red-900/30">
-              <h2 className="text-base font-semibold text-red-600 dark:text-red-400">
-                Zona pericolosa
-              </h2>
-
-              <p className="mt-1 text-sm text-gray-500 dark:text-[#888888]">
-                Azioni che possono modificare o eliminare definitivamente il tuo
-                profilo.
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between gap-5 p-6">
-              <div>
-                <h3 className="text-sm font-medium text-gray-900 dark:text-[#eeeeee]">
-                  Elimina profilo
-                </h3>
-
-                <p className="mt-1 max-w-xl text-xs leading-relaxed text-gray-500 dark:text-[#777777]">
-                  Elimina il tuo profilo locale e tutti i dati associati. Questa
-                  operazione non può essere annullata.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(true)}
-                className="shrink-0 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-950/30"
-              >
-                Elimina profilo
-              </button>
             </div>
           </section>
 
@@ -363,41 +375,6 @@ export default function SettingPage() {
           </section>
         </div>
       </div>
-
-      {/* ================= DELETE MODAL ================= */}
-
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-[#383838] dark:bg-[#202020]">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-[#eeeeee]">
-              Eliminare il profilo?
-            </h2>
-
-            <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-[#888888]">
-              Questa operazione eliminerà il profilo locale e i dati associati.
-              Non potrai annullare questa operazione.
-            </p>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(false)}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-[#383838] dark:text-[#cccccc] dark:hover:bg-[#181818]"
-              >
-                Annulla
-              </button>
-
-              <button
-                type="button"
-                onClick={handleDeleteProfile}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-              >
-                Elimina definitivamente
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
