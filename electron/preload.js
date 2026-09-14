@@ -23,4 +23,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   updateNoteCount: (courseId, count) => ipcRenderer.invoke("courses:updateNoteCount", courseId, count),
   delateCourse: (courseId) => ipcRenderer.invoke("courses:delate", courseId),
   updateCourse: (courseId, course) => ipcRenderer.invoke("courses:update", courseId, course),
+
+  //user
+  insertUser: (user) => ipcRenderer.invoke("user:create",user),
+  selectUser: () => ipcRenderer.invoke("user:select")
 });

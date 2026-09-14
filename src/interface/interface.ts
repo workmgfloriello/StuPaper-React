@@ -12,7 +12,6 @@ export interface Course {
   recent: boolean;
 }
 
-
 export type File = {
   id: string,
   name: string,
@@ -20,6 +19,12 @@ export type File = {
   course: string,
   description?: string,
   created_at: Date,
+}
+
+export type User = {
+  name: string,
+  school: string,
+  type: string
 }
 
 export type ElectronApi = {
@@ -39,4 +44,8 @@ export type ElectronApi = {
   delateFile?: (fileName: string) => any;
   renameFile?: (fileName: string, newName: string) => any;
   updateCourse: (courseId: string, course: any) => any;
+
+  //User
+  insertUser?: (user:User) => any
+  selectUser?: () => any
 }

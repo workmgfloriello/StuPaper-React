@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>StuPaper</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+
+      overflow: hidden;
+
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background: transparent;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .splash {
+      width: 100%;
+      height: 100%;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      background: #ffffff;
+
+      border-radius: 16px;
+    }
+
+    /* Logo */
+
+    .logo-container {
+      width: 86px;
+      height: 86px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 18px;
+
+      animation: logoAppear 0.7s ease-out;
+    }
+
+    .logo {
+      width: 86px;
+      height: 86px;
+
+      object-fit: contain;
+
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Titolo */
+
+    .title {
+      margin: 0;
+
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
+
+      color: #111827;
+
+      animation: titleAppear 0.7s ease-out;
+    }
+
+    /* Sottotitolo */
+
+    .subtitle {
+      margin-top: 8px;
+
+      font-size: 14px;
+      font-weight: 400;
+
+      color: #6b7280;
+
+      animation: subtitleAppear 0.9s ease-out;
+    }
+
+    /* Loading */
+
+    .loading-container {
+      width: 180px;
+
+      margin-top: 28px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      animation: loadingAppear 1s ease-out;
+    }
+
+    .loading-bar {
+      width: 100%;
+      height: 3px;
+
+      overflow: hidden;
+
+      border-radius: 999px;
+
+      background: #e5e7eb;
+    }
+
+    .loading-progress {
+      width: 45%;
+      height: 100%;
+
+      border-radius: 999px;
+
+      background: #4f46e5;
+
+      animation: loading 1.4s ease-in-out infinite;
+    }
+
+    .loading-text {
+      margin-top: 10px;
+
+      font-size: 12px;
+
+      color: #9ca3af;
+    }
+
+    /* Animazioni */
+
+    @keyframes logoAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes titleAppear {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes subtitleAppear {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes loadingAppear {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes loading {
+      0% {
+        transform: translateX(-120%);
+      }
+
+      50% {
+        transform: translateX(120%);
+      }
+
+      100% {
+        transform: translateX(220%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="splash">
+
+    <div class="logo-container">
+      <img
+        class="logo"
+        src="./assets/logo.png"
+        alt="StuPaper"
+      />
+    </div>
+
+    <h1 class="title">
+      StuPaper
+    </h1>
+
+    <p class="subtitle">
+      Il tuo spazio per lo studio
+    </p>
+
+    <div class="loading-container">
+
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+
+      <span class="loading-text">
+        Caricamento...
+      </span>
+
+    </div>
+
+  </div>
+</body>
+</html>

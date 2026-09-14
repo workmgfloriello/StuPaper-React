@@ -1,5 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
-import type { Course } from "../src/interface/interface.ts";
+import type { Course, User } from "../src/interface/interface.ts";
 
 type Note = {
   id: string;
@@ -60,6 +60,12 @@ function initializeDatabase(database: DatabaseSync) {
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
       value TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS user (
+      name TEXT PRIMARY KEY,
+      school TEXT NOT NULL,
+      type TEXT NOT NULL
     );
   `);
 
@@ -212,7 +218,9 @@ export function delateCourseDB(courseId: string) {
   return result;
 }
 
-export function updateCourse( courseId: string,course: {
+export function updateCourse(
+  courseId: string,
+  course: {
     name: string;
     professor: string;
     description: string;
@@ -301,4 +309,46 @@ export function renameNotes(oldName: string, newName: string) {
   `);
 
   return stmt.run(newName, oldName);
+}
+
+/**
+ * =========================
+ * USER
+ * =========================
+ */
+
+export function insertUser(user: User) {
+  const database = getDatabase();
+
+  const stmt = database.prepare(`
+    INSERT INTO user (
+      name,
+      school,
+      type
+    )
+    VALUES (?, ?, ? )
+  `);
+
+  const result = stmt.run(user.name, user.school, user.type);
+
+  return {
+    success: result.changes > 0,
+    user,
+  };
+}
+
+export function selectUser() {
+  const database = getDatabase();
+
+  return (
+    database
+      .prepare(
+        `
+      SELECT *
+      FROM user
+      LIMIT 1
+    `,
+      )
+      .get() ?? null
+  );
 }

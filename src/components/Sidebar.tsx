@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 
 import { useCourses } from "../lib/context/CoursesContext";
 import { useTheme } from "@/lib/context/ThemeContext";
+import { useUser } from "@/lib/context/UserContext";
 
 const navItems = [
   {
@@ -42,6 +43,7 @@ export default function Sidebar() {
   const [coursesOpen, setCoursesOpen] = useState(true);
 
   const { courses } = useCourses();
+  const {user} = useUser();
 
   //CHIUDI SE Ti TROVI NELL'EDITOR
   useEffect(() => {
@@ -169,10 +171,10 @@ export default function Sidebar() {
             <>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-[#cccccc]">
-                  Mario
+                  {user?.name}
                 </p>
                 <p className="truncate text-xs text-gray-500 dark:text-[#9d9d9d]">
-                  mario@studenti.it
+                  {user?.type}
                 </p>
               </div>
 

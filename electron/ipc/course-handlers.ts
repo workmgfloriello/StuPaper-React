@@ -9,7 +9,7 @@ import {
   updateRecent,
 } from "../../database/ManageDatabase.ts";
 
-export function registerCourseHandlers(dirPath: string) {
+export function registerCourseHandlers() {
   //Insert al DB
   ipcMain.handle("courses:insert", (_, course) => {
     return insertCourse(course);

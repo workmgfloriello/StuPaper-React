@@ -256,4 +256,95 @@ body {
   background: #e5e7eb;
 }
 
+.calendar-dashboard .fc-toolbar {
+  margin-bottom: 4px !important;
+}
+
+.calendar-dashboard .fc-toolbar-title {
+  font-size: 20px !important;
+  line-height: 1 !important;
+  font-weight: 600 !important;
+}
+
+.calendar-dashboard .fc-button {
+  padding: 1px 4px !important;
+  font-size: 9px !important;
+  line-height: 1.2 !important;
+  min-height: 20px !important;
+  height: 20px !important;
+}
+
+.calendar-dashboard .fc-button-group {
+  gap: 2px;
+}
+
+.calendar-dashboard .fc-col-header-cell-cushion {
+  padding: 2px 0 !important;
+  font-size:15px !important;
+}
+
+.calendar-dashboard .fc-daygrid-day-number {
+  padding: 2px !important;
+  font-size: 15px !important;
+}
+
+.calendar-dashboard .fc-daygrid-event {
+  padding: 0 2px !important;
+  font-size: 8px !important;
+  line-height: 12px !important;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c4c4 transparent;
+}
+
+/* Chrome / Electron / Edge */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
+}
+
+/* Angolo tra scrollbar verticale e orizzontale */
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.dark * {
+  scrollbar-color: #4a4a4a transparent;
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  background-clip: padding-box;
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #626262;
+  background-clip: padding-box;
+}
+
+.dark *::-webkit-scrollbar-corner {
+  background: transparent;
+}
 /* NON toccare gli span di Lowlight */
