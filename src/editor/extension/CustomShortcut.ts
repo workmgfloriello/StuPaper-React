@@ -148,6 +148,45 @@ export default Extension.create<CustomShortcutOptions>({
           this.options.onMathBlock?.();
         },
       }),
+
+      // table-righe-colonne
+      new InputRule({
+        find: /\/\/table-(\d+)-(\d+)\s$/,
+        handler: ({ state, range, chain }) => {
+          const tableNodeType = state.schema.nodes.table;
+
+          console.log("tableNodeType:", tableNodeType);
+
+          if (!tableNodeType) {
+            console.error("Nodo table non presente nello schema");
+            return;
+          }
+
+          const rows = Number(RegExp.$1);
+          const cols = Number(RegExp.$2);
+
+          if (rows <= 0 || cols <= 0) {
+            return;
+          }
+
+          const table = {
+            type: "table",
+            content: Array.from({ length: rows }, () => ({
+              type: "tableRow",
+              content: Array.from({ length: cols }, () => ({
+                type: "tableCell",
+                content: [
+                  {
+                    type: "paragraph",
+                  },
+                ],
+              })),
+            })),
+          };
+
+          chain().deleteRange(range).insertContentAt(range.from, table).run();
+        },
+      }),
     ];
   },
 });
